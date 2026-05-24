@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <!-- MIME Resolver for MVEL files -->
+    <folder name="Services">
+        <folder name="MIMEResolver">
+            <file name="MvelResolver.xml" url="MvelResolver.xml">
+                <attr name="displayName" bundlevalue="org.flossware.netbeans.mvel.Bundle#text/x-mvel"/>
+            </file>
+        </folder>
+    </folder>
+
+    <!-- Editors -->
+    <folder name="Editors">
+        <folder name="text">
+            <folder name="x-mvel">
+                <!-- Code Completion -->
+                <folder name="CompletionProviders">
+                    <file name="org-flossware-netbeans-mvel-completion-MvelLspCompletionProvider.instance"/>
+                </folder>
+
+                <!-- Context Menu Actions -->
+                <folder name="Actions">
+                    <file name="org-flossware-netbeans-mvel-execution-RunMvelAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Run/org-flossware-netbeans-mvel-execution-RunMvelAction.instance"/>
+                        <attr name="position" intvalue="100"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+
+    <!-- Loaders -->
+    <folder name="Loaders">
+        <folder name="text">
+            <folder name="x-mvel">
+                <folder name="Actions">
+                    <file name="org-flossware-netbeans-mvel-execution-RunMvelAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Run/org-flossware-netbeans-mvel-execution-RunMvelAction.instance"/>
+                        <attr name="position" intvalue="100"/>
+                    </file>
+                    <file name="org-openide-actions-OpenAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-OpenAction.instance"/>
+                        <attr name="position" intvalue="200"/>
+                    </file>
+                    <file name="org-openide-actions-FileSystemAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-FileSystemAction.instance"/>
+                        <attr name="position" intvalue="300"/>
+                    </file>
+                    <file name="org-openide-actions-ToolsAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-ToolsAction.instance"/>
+                        <attr name="position" intvalue="400"/>
+                    </file>
+                    <file name="org-openide-actions-PropertiesAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-PropertiesAction.instance"/>
+                        <attr name="position" intvalue="500"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+
+    <!-- Actions -->
+    <folder name="Actions">
+        <folder name="Run">
+            <file name="org-flossware-netbeans-mvel-execution-RunMvelAction.instance">
+                <attr name="instanceCreate" methodvalue="org.flossware.netbeans.mvel.execution.RunMvelAction.create"/>
+            </file>
+        </folder>
+        <folder name="Window">
+            <file name="org-flossware-netbeans-mvel-ui-MvelConsoleTopComponent.instance">
+                <attr name="component" methodvalue="org.flossware.netbeans.mvel.ui.MvelConsoleTopComponent.create"/>
+            </file>
+        </folder>
+    </folder>
+
+    <!-- Menu -->
+    <folder name="Menu">
+        <folder name="Window">
+            <file name="MvelConsoleAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Window/org-flossware-netbeans-mvel-ui-MvelConsoleTopComponent.instance"/>
+                <attr name="position" intvalue="1000"/>
+            </file>
+        </folder>
+    </folder>
+</filesystem>

@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <name>NetBeans Plugins</name>
-    <description>NetBeans IDE plugins: AI assistants (Claude, Gemini, ChatGPT) and language support (Python, LSP)</description>
+    <description>NetBeans IDE plugins: AI assistants (Claude, Gemini, ChatGPT) and language support (Python, Groovy, BeanShell, MVEL)</description>
 
     <modules>
         <!-- AI Assistant Plugins -->
@@ -21,6 +21,9 @@
         <!-- Language Support Plugins -->
         <module>languages/common</module>
         <module>languages/python</module>
+        <module>languages/groovy</module>
+        <module>languages/beanshell</module>
+        <module>languages/mvel</module>
     </modules>
 
     <properties>

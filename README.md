@@ -14,6 +14,9 @@ Three complete NetBeans plugins with identical features, each integrating a diff
 LSP-based language plugins for multi-language development:
 - **Common** - Shared abstractions and utilities for language plugins
 - **Python** - Python language support using Language Server Protocol (LSP)
+- **Groovy** - Groovy scripting language support with LSP
+- **BeanShell** - BeanShell Java scripting support
+- **MVEL** - MVEL expression language support
 
 All plugins can be installed simultaneously without conflicts.
 
@@ -40,6 +43,9 @@ This builds all plugins in one command:
 - `ai/chatgpt/target/netbeans-chatgpt-integration-1.0.0-SNAPSHOT.nbm`
 - `languages/common/target/netbeans-common-1.0.0-SNAPSHOT.nbm`
 - `languages/python/target/netbeans-python-1.0.0-SNAPSHOT.nbm`
+- `languages/groovy/target/netbeans-groovy-1.0.0-SNAPSHOT.nbm`
+- `languages/beanshell/target/netbeans-beanshell-1.0.0-SNAPSHOT.nbm`
+- `languages/mvel/target/netbeans-mvel-1.0.0-SNAPSHOT.nbm`
 
 ### Build Individual Plugin
 
@@ -52,12 +58,15 @@ mvn clean package -pl ai/chatgpt
 # Language Support
 mvn clean package -pl languages/common
 mvn clean package -pl languages/python
+mvn clean package -pl languages/groovy
+mvn clean package -pl languages/beanshell
+mvn clean package -pl languages/mvel
 
 # Build all AI plugins only
 mvn clean package -pl ai/claude,ai/gemini,ai/chatgpt
 
 # Build all language plugins only
-mvn clean package -pl languages/common,languages/python
+mvn clean package -pl languages/common,languages/python,languages/groovy,languages/beanshell,languages/mvel
 ```
 
 ### Install in NetBeans
@@ -91,9 +100,23 @@ netbeans-plugins/
 └── languages/                 # Language Support Plugins
     ├── common/                # Shared language utilities
     │   ├── pom.xml
+    │   ├── README.md
     │   └── src/...
-    └── python/                # Python LSP plugin
+    ├── python/                # Python LSP plugin
+    │   ├── pom.xml
+    │   ├── README.md
+    │   └── src/...
+    ├── groovy/                # Groovy LSP plugin
+    │   ├── pom.xml
+    │   ├── README.md
+    │   └── src/...
+    ├── beanshell/             # BeanShell plugin
+    │   ├── pom.xml
+    │   ├── README.md
+    │   └── src/...
+    └── mvel/                  # MVEL plugin
         ├── pom.xml
+        ├── README.md
         └── src/...
 ```
 
@@ -142,8 +165,11 @@ netbeans-plugins/
 - **[ai/chatgpt/README.md](ai/chatgpt/README.md)** - ChatGPT plugin documentation
 
 ### Language Plugins
-- **languages/common/** - Shared language support utilities
-- **languages/python/** - Python LSP integration
+- **[languages/common/README.md](languages/common/README.md)** - Shared language support utilities
+- **[languages/python/README.md](languages/python/README.md)** - Python LSP integration
+- **[languages/groovy/README.md](languages/groovy/README.md)** - Groovy language support
+- **[languages/beanshell/README.md](languages/beanshell/README.md)** - BeanShell scripting support
+- **[languages/mvel/README.md](languages/mvel/README.md)** - MVEL expression language support
 
 ## Configuration
 
@@ -190,9 +216,12 @@ Right-click on selected code:
 ### Language Plugins
 - **Common Module**: Shared abstractions
 - **Python Module**: LSP-based Python support
+- **Groovy Module**: LSP-based Groovy support
+- **BeanShell Module**: BeanShell scripting support
+- **MVEL Module**: MVEL expression language support
 
 ### Total Project
-- **Modules**: 5 (3 AI + 2 Language)
+- **Modules**: 8 (3 AI + 5 Language)
 - **Can Install Together**: ✅ Yes
 - **Conflicts**: ❌ None
 
