@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 FlossWare.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.flossware.netbeans.claude.ui;
 
 import java.awt.BorderLayout;
@@ -13,6 +29,7 @@ import javax.swing.text.StyledDocument;
 import org.flossware.netbeans.claude.api.ClaudeService;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -156,7 +173,7 @@ public final class ClaudeWindowTopComponent extends TopComponent {
             doc.insertString(doc.getLength(), sender + ": ", style);
             doc.insertString(doc.getLength(), message + "\n\n", messageStyle);
         } catch (BadLocationException e) {
-            e.printStackTrace();
+            Exceptions.printStackTrace(e);
         }
 
         // Auto-scroll to bottom
@@ -171,7 +188,7 @@ public final class ClaudeWindowTopComponent extends TopComponent {
             try {
                 doc.remove(lastIndex, doc.getLength() - lastIndex);
             } catch (BadLocationException e) {
-                e.printStackTrace();
+                Exceptions.printStackTrace(e);
             }
         }
     }
