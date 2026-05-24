@@ -6,7 +6,7 @@
 
     <groupId>org.flossware.netbeans</groupId>
     <artifactId>netbeans-ai-plugins</artifactId>
-    <version>1.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>NetBeans AI Plugins</name>
@@ -23,24 +23,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <netbeans.version>RELEASE220</netbeans.version>
-        
-        <!-- Version bump automation -->
-        <message>Automated Version Bump ${project.version} [ci skip]</message>
     </properties>
-
-    <scm>
-        <connection>scm:git:https://github.com/FlossWare/netbeans-plugins.git</connection>
-        <developerConnection>scm:git:https://github.com/FlossWare/netbeans-plugins.git</developerConnection>
-        <url>https://github.com/FlossWare/netbeans-plugins</url>
-    </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>packagecloud-flossware</id>
-            <name>packagecloud-flossware</name>
-            <url>https://packagecloud.io/flossware/java/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <dependencyManagement>
         <dependencies>
@@ -188,93 +171,9 @@
                         </archive>
                     </configuration>
                 </plugin>
-
-                <!-- JavaDoc Plugin -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.6.3</version>
-                    <configuration>
-                        <show>public</show>
-                        <nohelp>true</nohelp>
-                        <encoding>UTF-8</encoding>
-                        <docencoding>UTF-8</docencoding>
-                        <charset>UTF-8</charset>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <!-- Source Plugin -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.3.0</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <!-- Versions Plugin (for automatic version bumping) -->
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.16.2</version>
-                    <configuration>
-                        <generateBackupPoms>false</generateBackupPoms>
-                    </configuration>
-                </plugin>
-
-                <!-- Build Helper Plugin (for parsing versions) -->
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.5.0</version>
-                </plugin>
-
-                <!-- SCM Plugin (for git commits and tags) -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-scm-plugin</artifactId>
-                    <version>2.0.1</version>
-                    <configuration>
-                        <message>${message}</message>
-                        <tag>v${project.version}</tag>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
     </build>
-
-    <profiles>
-        <!-- Release profile for creating release artifacts -->
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <repositories>
         <repository>
