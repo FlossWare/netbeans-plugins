@@ -19,6 +19,7 @@ package org.flossware.netbeans.claude.api;
 
 import com.anthropic.client.AnthropicClient;
 import com.anthropic.client.okhttp.AnthropicOkHttpClient;
+import com.anthropic.core.http.StreamResponse;
 import com.anthropic.models.messages.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -148,10 +149,8 @@ public class ClaudeClient {
      */
     private String extractTextFromResponse(Message response) {
         StringBuilder result = new StringBuilder();
-        for (ContentBlockUnion block : response.content()) {
-            if (block.isText()) {
-                result.append(block.text().text());
-            }
+        for (ContentBlock block : response.content()) {
+            block.text().ifPresent(textBlock -> result.append(textBlock.text()));
         }
         return result.toString();
     }
@@ -198,18 +197,19 @@ public class ClaudeClient {
 
         // Stream the response
         StringBuilder fullResponse = new StringBuilder();
-        client.messages().stream(params).forEach(event -> {
-            if (event.isContentBlockDelta()) {
-                MessageStreamEvent.ContentBlockDelta delta = event.contentBlockDelta();
-                if (delta.delta().isTextDelta()) {
-                    String text = delta.delta().textDelta().text();
-                    fullResponse.append(text);
-                    if (onChunk != null) {
-                        onChunk.accept(text);
-                    }
-                }
-            }
-        });
+        try (StreamResponse<RawMessageStreamEvent> streamResponse =
+                client.messages().createStreaming(params)) {
+            streamResponse.stream()
+                    .flatMap(event -> event.contentBlockDelta().stream())
+                    .flatMap(deltaEvent -> deltaEvent.delta().text().stream())
+                    .forEach(textDelta -> {
+                        String text = textDelta.text();
+                        fullResponse.append(text);
+                        if (onChunk != null) {
+                            onChunk.accept(text);
+                        }
+                    });
+        }
 
         String completeResponse = fullResponse.toString();
 
