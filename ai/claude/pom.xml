@@ -18,7 +18,7 @@
     <description>Claude AI integration for Apache NetBeans IDE</description>
 
     <properties>
-        <anthropic.version>0.1.0</anthropic.version>
+        <anthropic.version>2.32.0</anthropic.version>
     </properties>
 
     <dependencies>
