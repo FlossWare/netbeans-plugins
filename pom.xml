@@ -25,6 +25,9 @@
         <module>languages/groovy</module>
         <module>languages/beanshell</module>
         <module>languages/mvel</module>
+        <module>languages/bash</module>
+        <module>languages/powershell</module>
+        <module>languages/batch</module>
     </modules>
 
     <properties>
