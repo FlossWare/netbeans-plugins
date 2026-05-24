@@ -18,7 +18,8 @@
 package org.flossware.netbeans.claude.api;
 
 import com.anthropic.client.AnthropicClient;
-import com.anthropic.models.*;
+import com.anthropic.client.okhttp.AnthropicOkHttpClient;
+import com.anthropic.models.messages.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -37,7 +38,7 @@ public class ClaudeClient {
     private static final String DEFAULT_MODEL = "claude-sonnet-4-5@20250929";
 
     private AnthropicClient client;
-    private final List<Message> conversationHistory;
+    private final List<MessageParam> conversationHistory;
 
     public ClaudeClient() {
         this.conversationHistory = new ArrayList<>();
@@ -47,7 +48,7 @@ public class ClaudeClient {
     private void initializeClient() {
         String apiKey = getApiKey();
         if (apiKey != null && !apiKey.isEmpty()) {
-            client = AnthropicClient.builder()
+            client = AnthropicOkHttpClient.builder()
                     .apiKey(apiKey)
                     .build();
         }
@@ -95,30 +96,29 @@ public class ClaudeClient {
         // Build message parameters
         MessageCreateParams.Builder paramsBuilder = MessageCreateParams.builder()
                 .model(model)
-                .maxTokens(maxTokens)
-                .temperature(temperature)
-                .addMessage(MessageParam.builder()
-                        .role(MessageParamRole.USER)
-                        .content(ContentBlock.ofText(userMessage))
-                        .build());
+                .maxTokens((long) maxTokens)
+                .temperature(temperature);
 
         // Add conversation history if exists
-        for (Message historyMsg : conversationHistory) {
-            paramsBuilder.addMessage(MessageParam.builder()
-                    .role(MessageParamRole.of(historyMsg.role().value()))
-                    .content(historyMsg.content().get(0))
-                    .build());
+        for (MessageParam historyMsg : conversationHistory) {
+            paramsBuilder.addMessage(historyMsg);
         }
+
+        // Add current message
+        paramsBuilder.addUserMessage(userMessage);
 
         // Send request
         Message response = client.messages().create(paramsBuilder.build());
 
         // Store in conversation history
-        conversationHistory.add(Message.builder()
-                .role(MessageRole.USER)
-                .addContent(ContentBlock.ofText(userMessage))
+        conversationHistory.add(MessageParam.builder()
+                .role(MessageParam.Role.USER)
+                .content(userMessage)
                 .build());
-        conversationHistory.add(response);
+        conversationHistory.add(MessageParam.builder()
+                .role(MessageParam.Role.ASSISTANT)
+                .content(extractTextFromResponse(response))
+                .build());
 
         // Extract text response
         return extractTextFromResponse(response);
@@ -148,9 +148,9 @@ public class ClaudeClient {
      */
     private String extractTextFromResponse(Message response) {
         StringBuilder result = new StringBuilder();
-        for (ContentBlock block : response.content()) {
+        for (ContentBlockUnion block : response.content()) {
             if (block.isText()) {
-                result.append(block.asText().text());
+                result.append(block.text().text());
             }
         }
         return result.toString();
@@ -181,36 +181,28 @@ public class ClaudeClient {
         double temperature = prefs.getDouble(PREF_TEMPERATURE, 1.0);
 
         // Build message parameters
-        List<MessageParam> messages = new ArrayList<>();
+        MessageCreateParams.Builder paramsBuilder = MessageCreateParams.builder()
+                .model(model)
+                .maxTokens((long) maxTokens)
+                .temperature(temperature);
 
         // Add conversation history
-        for (Message historyMsg : conversationHistory) {
-            messages.add(MessageParam.builder()
-                    .role(MessageParamRole.of(historyMsg.role().value()))
-                    .content(historyMsg.content().get(0))
-                    .build());
+        for (MessageParam historyMsg : conversationHistory) {
+            paramsBuilder.addMessage(historyMsg);
         }
 
         // Add current message
-        messages.add(MessageParam.builder()
-                .role(MessageParamRole.USER)
-                .content(ContentBlock.ofText(userMessage))
-                .build());
+        paramsBuilder.addUserMessage(userMessage);
 
-        MessageCreateParams params = MessageCreateParams.builder()
-                .model(model)
-                .maxTokens(maxTokens)
-                .temperature(temperature)
-                .messages(messages)
-                .build();
+        MessageCreateParams params = paramsBuilder.build();
 
         // Stream the response
         StringBuilder fullResponse = new StringBuilder();
         client.messages().stream(params).forEach(event -> {
             if (event.isContentBlockDelta()) {
-                ContentBlockDelta delta = event.asContentBlockDelta();
+                MessageStreamEvent.ContentBlockDelta delta = event.contentBlockDelta();
                 if (delta.delta().isTextDelta()) {
-                    String text = delta.delta().asTextDelta().text();
+                    String text = delta.delta().textDelta().text();
                     fullResponse.append(text);
                     if (onChunk != null) {
                         onChunk.accept(text);
@@ -222,13 +214,13 @@ public class ClaudeClient {
         String completeResponse = fullResponse.toString();
 
         // Store in conversation history
-        conversationHistory.add(Message.builder()
-                .role(MessageRole.USER)
-                .addContent(ContentBlock.ofText(userMessage))
+        conversationHistory.add(MessageParam.builder()
+                .role(MessageParam.Role.USER)
+                .content(userMessage)
                 .build());
-        conversationHistory.add(Message.builder()
-                .role(MessageRole.ASSISTANT)
-                .addContent(ContentBlock.ofText(completeResponse))
+        conversationHistory.add(MessageParam.builder()
+                .role(MessageParam.Role.ASSISTANT)
+                .content(completeResponse)
                 .build());
 
         return completeResponse;
