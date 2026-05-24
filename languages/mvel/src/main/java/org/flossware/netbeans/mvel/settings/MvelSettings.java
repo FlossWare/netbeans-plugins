@@ -17,6 +17,8 @@
 
 package org.flossware.netbeans.mvel.settings;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.flossware.netbeans.common.settings.AbstractSettings;
 
 /**
@@ -45,7 +47,6 @@ public class MvelSettings extends AbstractSettings {
     private static MvelSettings instance;
 
     private MvelSettings() {
-        super("org/flossware/netbeans/mvel");
     }
 
     /**
@@ -58,6 +59,19 @@ public class MvelSettings extends AbstractSettings {
         return instance;
     }
 
+    @Override
+    protected String getPreferenceModule() {
+        return "org.flossware.netbeans.mvel.settings.MvelSettings";
+    }
+
+    @Override
+    protected Map<String, String> getDefaultValues() {
+        Map<String, String> defaults = new HashMap<>();
+        defaults.put(PREF_MVEL_INTERPRETER_PATH, "");
+        defaults.put(PREF_LSP_SERVER_PATH, "");
+        return defaults;
+    }
+
     /**
      * Get the MVEL interpreter path.
      *
@@ -68,7 +82,7 @@ public class MvelSettings extends AbstractSettings {
      * @return The interpreter path, or empty string if not configured
      */
     public String getMvelInterpreterPath() {
-        return get(PREF_MVEL_INTERPRETER_PATH, "");
+        return getSetting(PREF_MVEL_INTERPRETER_PATH);
     }
 
     /**
@@ -77,7 +91,7 @@ public class MvelSettings extends AbstractSettings {
      * @param path The path to the MVEL interpreter or custom runner
      */
     public void setMvelInterpreterPath(String path) {
-        put(PREF_MVEL_INTERPRETER_PATH, path);
+        setSetting(PREF_MVEL_INTERPRETER_PATH, path);
     }
 
     /**
@@ -89,7 +103,7 @@ public class MvelSettings extends AbstractSettings {
      * @return The LSP server path, or empty string if not configured
      */
     public String getLspServerPath() {
-        return get(PREF_LSP_SERVER_PATH, "");
+        return getSetting(PREF_LSP_SERVER_PATH);
     }
 
     /**
@@ -98,6 +112,6 @@ public class MvelSettings extends AbstractSettings {
      * @param path The path to the MVEL LSP server
      */
     public void setLspServerPath(String path) {
-        put(PREF_LSP_SERVER_PATH, path);
+        setSetting(PREF_LSP_SERVER_PATH, path);
     }
 }

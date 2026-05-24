@@ -17,6 +17,8 @@
 
 package org.flossware.netbeans.beanshell.settings;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.flossware.netbeans.common.settings.AbstractSettings;
 
 /**
@@ -42,7 +44,6 @@ public class BeanShellSettings extends AbstractSettings {
     private static BeanShellSettings instance;
 
     private BeanShellSettings() {
-        super("org/flossware/netbeans/beanshell");
     }
 
     /**
@@ -55,17 +56,29 @@ public class BeanShellSettings extends AbstractSettings {
         return instance;
     }
 
+    @Override
+    protected String getPreferenceModule() {
+        return "org.flossware.netbeans.beanshell.settings.BeanShellSettings";
+    }
+
+    @Override
+    protected Map<String, String> getDefaultValues() {
+        Map<String, String> defaults = new HashMap<>();
+        defaults.put(PREF_BEANSHELL_PATH, "bsh");
+        return defaults;
+    }
+
     /**
      * Get the BeanShell interpreter path.
      */
     public String getBeanShellPath() {
-        return get(PREF_BEANSHELL_PATH, "bsh");
+        return getSetting(PREF_BEANSHELL_PATH);
     }
 
     /**
      * Set the BeanShell interpreter path.
      */
     public void setBeanShellPath(String path) {
-        put(PREF_BEANSHELL_PATH, path);
+        setSetting(PREF_BEANSHELL_PATH, path);
     }
 }

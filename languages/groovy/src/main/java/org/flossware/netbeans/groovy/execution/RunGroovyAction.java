@@ -17,12 +17,13 @@
 
 package org.flossware.netbeans.groovy.execution;
 
+import java.io.File;
 import org.flossware.netbeans.common.execution.AbstractRunAction;
 import org.flossware.netbeans.groovy.settings.GroovySettings;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
-import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataObject;
 import org.openide.util.NbBundle;
 
 /**
@@ -49,25 +50,34 @@ import org.openide.util.NbBundle;
 @NbBundle.Messages("CTL_RunGroovyAction=Run Groovy Script")
 public class RunGroovyAction extends AbstractRunAction {
 
+    public RunGroovyAction(DataObject context) {
+        super(context);
+    }
+
     @Override
-    protected String[] getCommand(FileObject file) {
+    protected String getInterpreterCommand() {
         GroovySettings settings = GroovySettings.getInstance();
         String groovyPath = settings.getGroovyPath();
 
         if (groovyPath == null || groovyPath.isEmpty()) {
-            groovyPath = "groovy"; // Default to PATH
+            return "groovy";
         }
 
-        return new String[]{groovyPath, file.getPath()};
+        return groovyPath;
     }
 
     @Override
-    protected String getLanguageName() {
-        return "Groovy";
+    protected String[] getInterpreterArgs(File file) {
+        return new String[]{file.getAbsolutePath()};
     }
 
     @Override
     protected String getFileExtension() {
         return "groovy";
+    }
+
+    @Override
+    protected String getLanguageName() {
+        return "Groovy";
     }
 }

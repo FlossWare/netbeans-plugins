@@ -17,6 +17,8 @@
 
 package org.flossware.netbeans.groovy.settings;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.flossware.netbeans.common.settings.AbstractSettings;
 
 /**
@@ -41,7 +43,6 @@ public class GroovySettings extends AbstractSettings {
     private static GroovySettings instance;
 
     private GroovySettings() {
-        super("org/flossware/netbeans/groovy");
     }
 
     /**
@@ -54,31 +55,44 @@ public class GroovySettings extends AbstractSettings {
         return instance;
     }
 
+    @Override
+    protected String getPreferenceModule() {
+        return "org.flossware.netbeans.groovy.settings.GroovySettings";
+    }
+
+    @Override
+    protected Map<String, String> getDefaultValues() {
+        Map<String, String> defaults = new HashMap<>();
+        defaults.put(PREF_GROOVY_PATH, "groovy");
+        defaults.put(PREF_LSP_SERVER_PATH, "groovy-language-server");
+        return defaults;
+    }
+
     /**
      * Get the Groovy interpreter path.
      */
     public String getGroovyPath() {
-        return get(PREF_GROOVY_PATH, "groovy");
+        return getSetting(PREF_GROOVY_PATH);
     }
 
     /**
      * Set the Groovy interpreter path.
      */
     public void setGroovyPath(String path) {
-        put(PREF_GROOVY_PATH, path);
+        setSetting(PREF_GROOVY_PATH, path);
     }
 
     /**
      * Get the Groovy LSP server path.
      */
     public String getLspServerPath() {
-        return get(PREF_LSP_SERVER_PATH, "groovy-language-server");
+        return getSetting(PREF_LSP_SERVER_PATH);
     }
 
     /**
      * Set the Groovy LSP server path.
      */
     public void setLspServerPath(String path) {
-        put(PREF_LSP_SERVER_PATH, path);
+        setSetting(PREF_LSP_SERVER_PATH, path);
     }
 }

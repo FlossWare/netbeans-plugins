@@ -18,6 +18,7 @@
 package org.flossware.netbeans.groovy.project;
 
 import org.flossware.netbeans.common.project.AbstractProject;
+import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -32,17 +33,17 @@ import org.openide.filesystems.FileObject;
  */
 public class GroovyProject extends AbstractProject {
 
-    public GroovyProject(FileObject projectDirectory) {
-        super(projectDirectory);
+    public GroovyProject(FileObject projectDirectory, ProjectState state) {
+        super(projectDirectory, state);
     }
 
     @Override
-    protected String getProjectTypeName() {
+    protected String getLanguageName() {
         return "Groovy";
     }
 
     @Override
-    protected String getDisplayName() {
-        return getProjectDirectory().getName() + " (Groovy)";
+    protected String getIconPath() {
+        return "org/flossware/netbeans/groovy/resources/groovy-icon.png";
     }
 }

@@ -17,12 +17,13 @@
 
 package org.flossware.netbeans.beanshell.execution;
 
+import java.io.File;
 import org.flossware.netbeans.common.execution.AbstractRunAction;
 import org.flossware.netbeans.beanshell.settings.BeanShellSettings;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
-import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataObject;
 import org.openide.util.NbBundle;
 
 /**
@@ -49,25 +50,34 @@ import org.openide.util.NbBundle;
 @NbBundle.Messages("CTL_RunBeanShellAction=Run BeanShell Script")
 public class RunBeanShellAction extends AbstractRunAction {
 
+    public RunBeanShellAction(DataObject context) {
+        super(context);
+    }
+
     @Override
-    protected String[] getCommand(FileObject file) {
+    protected String getInterpreterCommand() {
         BeanShellSettings settings = BeanShellSettings.getInstance();
         String bshPath = settings.getBeanShellPath();
 
         if (bshPath == null || bshPath.isEmpty()) {
-            bshPath = "bsh"; // Default to PATH
+            return "bsh";
         }
 
-        return new String[]{bshPath, file.getPath()};
+        return bshPath;
     }
 
     @Override
-    protected String getLanguageName() {
-        return "BeanShell";
+    protected String[] getInterpreterArgs(File file) {
+        return new String[]{file.getAbsolutePath()};
     }
 
     @Override
     protected String getFileExtension() {
         return "bsh";
+    }
+
+    @Override
+    protected String getLanguageName() {
+        return "BeanShell";
     }
 }

@@ -18,6 +18,7 @@
 package org.flossware.netbeans.mvel.project;
 
 import org.flossware.netbeans.common.project.AbstractProject;
+import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -36,17 +37,17 @@ import org.openide.filesystems.FileObject;
  */
 public class MvelProject extends AbstractProject {
 
-    public MvelProject(FileObject projectDirectory) {
-        super(projectDirectory);
+    public MvelProject(FileObject projectDirectory, ProjectState state) {
+        super(projectDirectory, state);
     }
 
     @Override
-    protected String getProjectTypeName() {
+    protected String getLanguageName() {
         return "MVEL";
     }
 
     @Override
-    protected String getDisplayName() {
-        return getProjectDirectory().getName() + " (MVEL)";
+    protected String getIconPath() {
+        return "org/flossware/netbeans/mvel/resources/mvel-icon.png";
     }
 }

@@ -46,57 +46,20 @@ import org.openide.util.lookup.ServiceProvider;
 public class MvelProjectFactory extends AbstractProjectFactory {
 
     @Override
-    protected boolean isProjectDirectory(FileObject dir) {
-        if (dir == null || !dir.isFolder()) {
-            return false;
-        }
-
-        // Check for build files (Maven/Gradle projects with MVEL)
-        FileObject pomXml = dir.getFileObject("pom.xml");
-        if (pomXml != null) {
-            return true;
-        }
-
-        FileObject buildGradle = dir.getFileObject("build.gradle");
-        if (buildGradle != null) {
-            return true;
-        }
-
-        // Check for any .mvel or .mv files
-        return hasMvelFiles(dir);
+    protected String[] getProjectMarkerFiles() {
+        return new String[]{
+            "pom.xml",
+            "build.gradle"
+        };
     }
 
     @Override
-    protected Project createProject(FileObject dir) {
-        return new MvelProject(dir);
+    protected String getFileExtension() {
+        return "mvel";
     }
 
     @Override
-    protected String getProjectTypeName() {
-        return "MVEL";
-    }
-
-    /**
-     * Check if directory contains any .mvel or .mv files.
-     */
-    private boolean hasMvelFiles(FileObject dir) {
-        if (dir == null || !dir.isFolder()) {
-            return false;
-        }
-
-        for (FileObject child : dir.getChildren()) {
-            if (child.isData()) {
-                String ext = child.getExt();
-                if ("mvel".equals(ext) || "mv".equals(ext)) {
-                    return true;
-                }
-            }
-            if (child.isFolder() && !"build".equals(child.getName()) && !"target".equals(child.getName())) {
-                if (hasMvelFiles(child)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    protected Project createProjectInstance(FileObject dir, org.netbeans.spi.project.ProjectState state) {
+        return new MvelProject(dir, state);
     }
 }

@@ -21,21 +21,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Validates that NetBeans LSP client module is available at runtime.
+ * Validator for NetBeans LSP client availability.
  *
- * <p>The NetBeans LSP client module (org.netbeans.modules.lsp.client) is not
- * available in Maven Central but is provided at runtime by NetBeans 22.0+.
- * This validator checks for its availability and provides clear error messages
- * if it's missing.</p>
+ * <p>This class provides runtime validation of the NetBeans LSP client module
+ * (org-netbeans-modules-lsp-client). Since this module is not available at
+ * compile time via Maven Central, we need to check for its availability at
+ * runtime.</p>
  *
- * <p><b>Usage Example:</b></p>
- * <pre>{@code
- * if (!LspClientValidator.isLspClientAvailable()) {
- *     logger.warning("LSP features disabled: " +
- *         LspClientValidator.getErrorMessage());
- *     return null;
- * }
- * }</pre>
+ * <p>The LSP client module is available in NetBeans 22.0 and later.</p>
  *
  * @author FlossWare
  * @version 1.0
@@ -43,129 +36,58 @@ import java.util.logging.Logger;
  */
 public class LspClientValidator {
 
-    private static final Logger LOGGER = Logger.getLogger(LspClientValidator.class.getName());
-    private static final String LSP_BINDINGS_CLASS = "org.netbeans.modules.lsp.client.LSPBindings";
-    private static final String MINIMUM_NETBEANS_VERSION = "22.0";
-
-    private static Boolean lspClientAvailable = null;
-    private static String errorMessage = null;
+    private static final String LSP_CLIENT_CLASS = "org.netbeans.modules.lsp.client.LSPBindings";
+    private static Boolean lspClientAvailable;
 
     /**
-     * Check if NetBeans LSP client module is available.
+     * Check if the NetBeans LSP client module is available at runtime.
      *
-     * <p>This method caches the result after the first check for performance.</p>
+     * <p>This method attempts to load the LSPBindings class to verify that
+     * the LSP client module is present in the NetBeans installation.</p>
      *
      * @return true if LSP client is available, false otherwise
      */
     public static synchronized boolean isLspClientAvailable() {
-        if (lspClientAvailable != null) {
-            return lspClientAvailable;
-        }
-
-        try {
-            // Try to load the LSPBindings class
-            Class<?> lspBindingsClass = Class.forName(LSP_BINDINGS_CLASS);
-
-            // Verify it's not our stub class by checking for a real method
+        if (lspClientAvailable == null) {
             try {
-                lspBindingsClass.getMethod("getBindings",
-                    Class.forName("org.openide.filesystems.FileObject"));
+                Class.forName(LSP_CLIENT_CLASS);
                 lspClientAvailable = true;
-                errorMessage = null;
-                LOGGER.log(Level.INFO, "NetBeans LSP client module is available");
-            } catch (NoSuchMethodException e) {
+            } catch (ClassNotFoundException e) {
                 lspClientAvailable = false;
-                errorMessage = buildStubClassErrorMessage();
-                LOGGER.log(Level.WARNING, errorMessage);
             }
-
-        } catch (ClassNotFoundException e) {
-            lspClientAvailable = false;
-            errorMessage = buildMissingModuleErrorMessage();
-            LOGGER.log(Level.WARNING, errorMessage);
         }
-
         return lspClientAvailable;
     }
 
     /**
-     * Get error message explaining why LSP client is not available.
+     * Validate LSP client availability and log a warning if not available.
      *
-     * <p>Returns null if LSP client is available.</p>
+     * <p>This method should be called during plugin initialization to inform
+     * users if LSP features will not be available.</p>
      *
-     * @return Error message or null
+     * @param logger The logger to use for warning messages
      */
-    public static String getErrorMessage() {
-        isLspClientAvailable(); // Ensure check has been performed
-        return errorMessage;
-    }
-
-    /**
-     * Get the minimum NetBeans version required for LSP support.
-     *
-     * @return Minimum NetBeans version (e.g., "22.0")
-     */
-    public static String getMinimumNetBeansVersion() {
-        return MINIMUM_NETBEANS_VERSION;
-    }
-
-    /**
-     * Validate LSP client availability and log warning if unavailable.
-     *
-     * <p>Convenience method that checks availability and logs a warning
-     * with the error message if LSP client is not available.</p>
-     *
-     * @param logger The logger to use for warnings
-     * @return true if LSP client is available, false otherwise
-     */
-    public static boolean validateAndWarn(Logger logger) {
+    public static void validateAndWarn(Logger logger) {
         if (!isLspClientAvailable()) {
-            logger.log(Level.WARNING, getErrorMessage());
-            return false;
+            if (logger != null) {
+                logger.log(Level.WARNING,
+                    "NetBeans LSP client module (org-netbeans-modules-lsp-client) is not available. " +
+                    "LSP-based code completion and language server features will not work. " +
+                    "Please use NetBeans 22.0 or later for full LSP support.");
+            }
         }
-        return true;
     }
 
     /**
-     * Reset the cached validation state.
+     * Reset the cached availability check.
      *
-     * <p>For testing purposes only. Not normally needed in production.</p>
+     * <p>This method is primarily for testing purposes.</p>
      */
-    static synchronized void resetCache() {
+    static void reset() {
         lspClientAvailable = null;
-        errorMessage = null;
     }
 
-    /**
-     * Build error message for when LSP client module is missing.
-     */
-    private static String buildMissingModuleErrorMessage() {
-        return String.format(
-            "NetBeans LSP client module not found. " +
-            "Language support features require NetBeans %s or later. " +
-            "Current NetBeans installation does not include " +
-            "org.netbeans.modules.lsp.client module. " +
-            "Please upgrade to NetBeans %s or later for LSP-based language support.",
-            MINIMUM_NETBEANS_VERSION, MINIMUM_NETBEANS_VERSION
-        );
-    }
-
-    /**
-     * Build error message for when stub class is being used.
-     */
-    private static String buildStubClassErrorMessage() {
-        return String.format(
-            "LSP client stub class detected. " +
-            "The compilation stub for org.netbeans.modules.lsp.client.LSPBindings " +
-            "is being used instead of the real NetBeans implementation. " +
-            "This plugin requires NetBeans %s or later with LSP client support. " +
-            "If running in NetBeans %s+, this indicates a module loading issue.",
-            MINIMUM_NETBEANS_VERSION, MINIMUM_NETBEANS_VERSION
-        );
-    }
-
-    // Private constructor to prevent instantiation
     private LspClientValidator() {
-        throw new UnsupportedOperationException("Utility class");
+        // Utility class - no instances
     }
 }

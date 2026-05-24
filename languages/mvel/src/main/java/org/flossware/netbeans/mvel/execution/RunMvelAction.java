@@ -17,12 +17,13 @@
 
 package org.flossware.netbeans.mvel.execution;
 
+import java.io.File;
 import org.flossware.netbeans.common.execution.AbstractRunAction;
 import org.flossware.netbeans.mvel.settings.MvelSettings;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
-import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataObject;
 import org.openide.util.NbBundle;
 
 /**
@@ -59,14 +60,16 @@ import org.openide.util.NbBundle;
 @NbBundle.Messages("CTL_RunMvelAction=Run MVEL Script")
 public class RunMvelAction extends AbstractRunAction {
 
+    public RunMvelAction(DataObject context) {
+        super(context);
+    }
+
     @Override
-    protected String[] getCommand(FileObject file) {
+    protected String getInterpreterCommand() {
         MvelSettings settings = MvelSettings.getInstance();
         String mvelPath = settings.getMvelInterpreterPath();
 
         if (mvelPath == null || mvelPath.isEmpty()) {
-            // No interpreter configured - show helpful message
-            // This will be caught and displayed by AbstractRunAction
             throw new IllegalStateException(
                 "MVEL interpreter not configured.\n\n" +
                 "MVEL is typically used as an embedded expression language in Java applications.\n" +
@@ -77,16 +80,21 @@ public class RunMvelAction extends AbstractRunAction {
             );
         }
 
-        return new String[]{mvelPath, file.getPath()};
+        return mvelPath;
     }
 
     @Override
-    protected String getLanguageName() {
-        return "MVEL";
+    protected String[] getInterpreterArgs(File file) {
+        return new String[]{file.getAbsolutePath()};
     }
 
     @Override
     protected String getFileExtension() {
         return "mvel";
+    }
+
+    @Override
+    protected String getLanguageName() {
+        return "MVEL";
     }
 }

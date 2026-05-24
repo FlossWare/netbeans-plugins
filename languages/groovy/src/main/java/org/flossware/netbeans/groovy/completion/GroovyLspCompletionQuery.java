@@ -17,7 +17,14 @@
 
 package org.flossware.netbeans.groovy.completion;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import org.flossware.netbeans.common.completion.AbstractLspCompletionQuery;
+import org.netbeans.api.lsp.Completion;
+import org.netbeans.modules.lsp.client.LSPBindings;
+import org.openide.filesystems.FileObject;
 
 /**
  * Groovy LSP completion query implementation.
@@ -32,12 +39,25 @@ import org.flossware.netbeans.common.completion.AbstractLspCompletionQuery;
 public class GroovyLspCompletionQuery extends AbstractLspCompletionQuery {
 
     @Override
-    protected String getLanguageName() {
-        return "Groovy";
+    protected String getMimeType() {
+        return "text/x-groovy";
     }
 
     @Override
-    protected String getMimeType() {
-        return "text/x-groovy";
+    protected List<Completion> queryLspServer(FileObject file, int line, int column) {
+        try {
+            LSPBindings bindings = LSPBindings.getBindings(file);
+            if (bindings == null) {
+                return new ArrayList<>();
+            }
+
+            CompletableFuture<List<Completion>> future = bindings.getCompletions(file, line, column);
+            List<Completion> completions = future.get(getLspTimeoutSeconds(), TimeUnit.SECONDS);
+
+            return completions != null ? completions : new ArrayList<>();
+
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
     }
 }

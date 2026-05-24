@@ -41,58 +41,20 @@ import org.openide.util.lookup.ServiceProvider;
 public class BeanShellProjectFactory extends AbstractProjectFactory {
 
     @Override
-    protected boolean isProjectDirectory(FileObject dir) {
-        if (dir == null || !dir.isFolder()) {
-            return false;
-        }
-
-        // Check for Gradle with BeanShell
-        FileObject buildGradle = dir.getFileObject("build.gradle");
-        if (buildGradle != null) {
-            return true;
-        }
-
-        // Check for Maven with pom.xml
-        FileObject pomXml = dir.getFileObject("pom.xml");
-        if (pomXml != null) {
-            return true;
-        }
-
-        // Check for any .bsh or .beanshell files
-        return hasBeanShellFiles(dir);
+    protected String[] getProjectMarkerFiles() {
+        return new String[]{
+            "build.gradle",
+            "pom.xml"
+        };
     }
 
     @Override
-    protected Project createProject(FileObject dir) {
-        return new BeanShellProject(dir);
+    protected String getFileExtension() {
+        return "bsh";
     }
 
     @Override
-    protected String getProjectTypeName() {
-        return "BeanShell";
-    }
-
-    /**
-     * Check if directory contains any .bsh or .beanshell files.
-     */
-    private boolean hasBeanShellFiles(FileObject dir) {
-        if (dir == null || !dir.isFolder()) {
-            return false;
-        }
-
-        for (FileObject child : dir.getChildren()) {
-            if (child.isData()) {
-                String ext = child.getExt();
-                if ("bsh".equals(ext) || "beanshell".equals(ext)) {
-                    return true;
-                }
-            }
-            if (child.isFolder() && !"build".equals(child.getName())) {
-                if (hasBeanShellFiles(child)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    protected Project createProjectInstance(FileObject dir, org.netbeans.spi.project.ProjectState state) {
+        return new BeanShellProject(dir, state);
     }
 }

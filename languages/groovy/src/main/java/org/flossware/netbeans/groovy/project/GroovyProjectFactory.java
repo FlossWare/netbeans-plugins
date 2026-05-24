@@ -41,55 +41,20 @@ import org.openide.util.lookup.ServiceProvider;
 public class GroovyProjectFactory extends AbstractProjectFactory {
 
     @Override
-    protected boolean isProjectDirectory(FileObject dir) {
-        if (dir == null || !dir.isFolder()) {
-            return false;
-        }
-
-        // Check for Gradle with Groovy
-        FileObject buildGradle = dir.getFileObject("build.gradle");
-        if (buildGradle != null) {
-            return true;
-        }
-
-        // Check for Maven with pom.xml
-        FileObject pomXml = dir.getFileObject("pom.xml");
-        if (pomXml != null) {
-            return true;
-        }
-
-        // Check for any .groovy files
-        return hasGroovyFiles(dir);
+    protected String[] getProjectMarkerFiles() {
+        return new String[]{
+            "build.gradle",
+            "pom.xml"
+        };
     }
 
     @Override
-    protected Project createProject(FileObject dir) {
-        return new GroovyProject(dir);
+    protected String getFileExtension() {
+        return "groovy";
     }
 
     @Override
-    protected String getProjectTypeName() {
-        return "Groovy";
-    }
-
-    /**
-     * Check if directory contains any .groovy files.
-     */
-    private boolean hasGroovyFiles(FileObject dir) {
-        if (dir == null || !dir.isFolder()) {
-            return false;
-        }
-
-        for (FileObject child : dir.getChildren()) {
-            if (child.isData() && "groovy".equals(child.getExt())) {
-                return true;
-            }
-            if (child.isFolder() && !"build".equals(child.getName())) {
-                if (hasGroovyFiles(child)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    protected Project createProjectInstance(FileObject dir, org.netbeans.spi.project.ProjectState state) {
+        return new GroovyProject(dir, state);
     }
 }
