@@ -29,6 +29,8 @@
         <module>languages/powershell</module>
         <module>languages/batch</module>
         <module>languages/zsh</module>
+        <module>languages/erlang</module>
+        <module>languages/ruby</module>
     </modules>
 
     <properties>

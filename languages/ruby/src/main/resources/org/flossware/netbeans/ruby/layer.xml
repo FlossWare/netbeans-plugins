@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "https://netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <!-- Register Ruby language -->
+    <folder name="Editors">
+        <folder name="text">
+            <folder name="x-ruby">
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.ruby.Bundle"/>
+                <file name="language.instance">
+                    <attr name="instanceOf" stringvalue="org.netbeans.api.lexer.Language"/>
+                    <attr name="instanceCreate" methodvalue="org.flossware.netbeans.ruby.lexer.RubyTokenId.language"/>
+                </file>
+                <folder name="FontsColors">
+                    <folder name="NetBeans">
+                        <folder name="Defaults">
+                            <file name="FontsColors.xml" url="FontsColors.xml">
+                                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.ruby.Bundle"/>
+                            </file>
+                        </folder>
+                    </folder>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+
+    <!-- Register debug action -->
+    <folder name="Loaders">
+        <folder name="text">
+            <folder name="x-ruby">
+                <folder name="Actions">
+                    <file name="org-flossware-netbeans-ruby-debugger-DebugRubyAction.instance">
+                        <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                        <attr name="delegate" methodvalue="org.flossware.netbeans.ruby.debugger.DebugRubyAction.class"/>
+                        <attr name="displayName" bundlevalue="org.flossware.netbeans.ruby.debugger.Bundle#CTL_DebugRubyAction"/>
+                        <attr name="noIconInMenu" boolvalue="false"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>
