@@ -155,11 +155,9 @@
                 <artifactId>nbm-maven-plugin</artifactId>
                 <configuration>
                     <useOSGiDependencies>false</useOSGiDependencies>
+                    <verifyRuntime>skip</verifyRuntime>
                     <publicPackages>
                         <publicPackage>org.flossware.netbeans.claude.*</publicPackage>
-                        <publicPackage>com.anthropic.*</publicPackage>
-                        <publicPackage>com.fasterxml.jackson.*</publicPackage>
-                        <publicPackage>com.github.victools.jsonschema.*</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>
