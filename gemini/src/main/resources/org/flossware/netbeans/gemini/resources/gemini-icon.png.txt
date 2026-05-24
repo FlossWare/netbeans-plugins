@@ -1,0 +1,8 @@
+# Icon Placeholder
+# Create a 16x16 PNG icon for Gemini
+# Use ImageMagick, GIMP, or any image editor
+
+# Example with ImageMagick:
+# convert -size 16x16 xc:#4285F4 -fill white -pointsize 12 -gravity center -annotate +0+0 "G" gemini-icon.png
+
+For now, the build will work without the icon, but the UI will show a default icon.

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <!-- Menu Bar -->
+    <folder name="Menu">
+        <folder name="Tools">
+            <file name="org-flossware-netbeans-gemini-GeminiAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Tools/org-flossware-netbeans-gemini-GeminiAction.instance"/>
+                <attr name="position" intvalue="1000"/>
+            </file>
+        </folder>
+    </folder>
+
+    <!-- Actions -->
+    <folder name="Actions">
+        <folder name="Tools">
+            <file name="org-flossware-netbeans-gemini-GeminiAction.instance">
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="displayName" bundlevalue="org.flossware.netbeans.gemini.Bundle#CTL_GeminiAction"/>
+                <attr name="iconBase" stringvalue="org/flossware/netbeans/gemini/resources/gemini-icon.png"/>
+            </file>
+        </folder>
+        <folder name="Window">
+            <file name="org-flossware-netbeans-gemini-GeminiWindowAction.instance">
+                <attr name="component" methodvalue="org.flossware.netbeans.gemini.ui.GeminiWindowTopComponent.findInstance"/>
+                <attr name="displayName" bundlevalue="org.flossware.netbeans.gemini.Bundle#CTL_GeminiWindowAction"/>
+                <attr name="iconBase" stringvalue="org/flossware/netbeans/gemini/resources/gemini-icon.png"/>
+                <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
+            </file>
+        </folder>
+    </folder>
+
+    <!-- Window -->
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="GeminiWindowTopComponent.settings" url="GeminiWindowTopComponentSettings.xml"/>
+        </folder>
+        <folder name="Modes">
+            <folder name="rightSlidingSide">
+                <file name="GeminiWindowTopComponent.wstcref" url="GeminiWindowTopComponentWstcref.xml"/>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

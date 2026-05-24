@@ -1,0 +1,9 @@
+This directory needs a claude-icon.png file (16x16 pixels).
+
+You can create one using:
+1. Any image editor (GIMP, Photoshop, etc.)
+2. Online icon generators
+3. ImageMagick command:
+   convert -size 16x16 xc:#6366f1 -fill white -pointsize 12 -gravity center -annotate +0+0 "C" claude-icon.png
+
+For now, you can use any 16x16 PNG as a placeholder.
