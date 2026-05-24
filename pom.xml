@@ -5,17 +5,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.flossware.netbeans</groupId>
-    <artifactId>netbeans-ai-plugins</artifactId>
+    <artifactId>netbeans-plugins</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
 
-    <name>NetBeans AI Plugins</name>
-    <description>AI-powered NetBeans IDE plugins for Claude, Gemini, and ChatGPT</description>
+    <name>NetBeans Plugins</name>
+    <description>NetBeans IDE plugins: AI assistants (Claude, Gemini, ChatGPT) and language support (Python, LSP)</description>
 
     <modules>
-        <module>claude</module>
-        <module>gemini</module>
-        <module>chatgpt</module>
+        <!-- AI Assistant Plugins -->
+        <module>ai/claude</module>
+        <module>ai/gemini</module>
+        <module>ai/chatgpt</module>
+
+        <!-- Language Support Plugins -->
+        <module>languages/common</module>
+        <module>languages/python</module>
     </modules>
 
     <properties>
@@ -135,6 +140,43 @@
                 <artifactId>org-netbeans-modules-lexer</artifactId>
                 <version>${netbeans.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.netbeans.api</groupId>
+                <artifactId>org-netbeans-modules-editor-mimelookup</artifactId>
+                <version>${netbeans.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.netbeans.api</groupId>
+                <artifactId>org-netbeans-modules-editor-document</artifactId>
+                <version>${netbeans.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.netbeans.api</groupId>
+                <artifactId>org-netbeans-modules-extexecution</artifactId>
+                <version>${netbeans.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.netbeans.api</groupId>
+                <artifactId>org-netbeans-modules-options-api</artifactId>
+                <version>${netbeans.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.netbeans.api</groupId>
+                <artifactId>org-openide-util-ui</artifactId>
+                <version>${netbeans.version}</version>
+            </dependency>
+
+            <!-- LSP Support for Language Plugins -->
+            <dependency>
+                <groupId>org.netbeans.api</groupId>
+                <artifactId>org-netbeans-api-lsp</artifactId>
+                <version>${netbeans.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.netbeans.modules</groupId>
+                <artifactId>org-netbeans-modules-lsp-client</artifactId>
+                <version>${netbeans.version}</version>
+            </dependency>
 
             <!-- Common JSON Processing -->
             <dependency>
@@ -185,6 +227,20 @@
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>mockwebserver</artifactId>
                 <version>4.12.0</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- NetBeans Test Harness for Integration Tests -->
+            <dependency>
+                <groupId>org.netbeans.api</groupId>
+                <artifactId>org-netbeans-modules-nbjunit</artifactId>
+                <version>${netbeans.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.netbeans.api</groupId>
+                <artifactId>org-netbeans-modules-jellytools-platform</artifactId>
+                <version>${netbeans.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -292,11 +348,26 @@
                     </configuration>
                 </plugin>
 
-                <!-- Surefire Plugin (for running tests) -->
+                <!-- Surefire Plugin (for running unit tests) -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.2.3</version>
+                </plugin>
+
+                <!-- Failsafe Plugin (for running integration tests) -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.2.3</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
 
                 <!-- JaCoCo Plugin (for code coverage) -->

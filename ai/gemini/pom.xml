@@ -6,15 +6,20 @@
 
     <parent>
         <groupId>org.flossware.netbeans</groupId>
-        <artifactId>netbeans-ai-plugins</artifactId>
+        <artifactId>netbeans-plugins</artifactId>
         <version>1.0</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>netbeans-chatgpt-integration</artifactId>
+    <artifactId>netbeans-gemini-integration</artifactId>
     <packaging>nbm</packaging>
 
-    <name>NetBeans ChatGPT Integration</name>
-    <description>OpenAI ChatGPT integration for Apache NetBeans IDE</description>
+    <name>NetBeans Gemini Integration</name>
+    <description>Google Gemini AI integration for Apache NetBeans IDE</description>
+
+    <properties>
+        <google-ai.version>1.1.0</google-ai.version>
+    </properties>
 
     <dependencies>
         <!-- NetBeans Platform Dependencies (from parent) -->
@@ -91,11 +96,11 @@
             <artifactId>org-netbeans-modules-lexer</artifactId>
         </dependency>
 
-        <!-- ChatGPT-specific: OpenAI SDK -->
+        <!-- Gemini-specific: Google Cloud AI Platform -->
         <dependency>
-            <groupId>com.theokanning.openai-gpt3-java</groupId>
-            <artifactId>service</artifactId>
-            <version>0.18.2</version>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-aiplatform</artifactId>
+            <version>${google-ai.version}</version>
         </dependency>
 
         <!-- Common dependencies (from parent) -->

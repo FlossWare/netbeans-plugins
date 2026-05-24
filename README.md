@@ -1,15 +1,21 @@
-# NetBeans AI Plugins
+# NetBeans Plugins
 
-Multi-module Maven project providing AI-powered NetBeans IDE plugins for **Claude**, **Gemini**, and **ChatGPT**.
+Multi-module Maven project providing comprehensive NetBeans IDE plugins for **AI assistants** and **language support**.
 
 ## Overview
 
+### AI Assistant Plugins
 Three complete NetBeans plugins with identical features, each integrating a different AI provider:
 - **Claude** - Anthropic's Claude AI
 - **Gemini** - Google's Gemini AI
 - **ChatGPT** - OpenAI's ChatGPT
 
-All three can be installed simultaneously without conflicts.
+### Language Support Plugins
+LSP-based language plugins for multi-language development:
+- **Common** - Shared abstractions and utilities for language plugins
+- **Python** - Python language support using Language Server Protocol (LSP)
+
+All plugins can be installed simultaneously without conflicts.
 
 ## Features (All Plugins)
 
@@ -28,22 +34,30 @@ All three can be installed simultaneously without conflicts.
 mvn clean package
 ```
 
-This builds all three plugins in one command:
-- `claude/target/netbeans-claude-integration-1.0.0-SNAPSHOT.nbm`
-- `gemini/target/netbeans-gemini-integration-1.0.0-SNAPSHOT.nbm`
-- `chatgpt/target/netbeans-chatgpt-integration-1.0.0-SNAPSHOT.nbm`
+This builds all plugins in one command:
+- `ai/claude/target/netbeans-claude-integration-1.0.0-SNAPSHOT.nbm`
+- `ai/gemini/target/netbeans-gemini-integration-1.0.0-SNAPSHOT.nbm`
+- `ai/chatgpt/target/netbeans-chatgpt-integration-1.0.0-SNAPSHOT.nbm`
+- `languages/common/target/netbeans-common-1.0.0-SNAPSHOT.nbm`
+- `languages/python/target/netbeans-python-1.0.0-SNAPSHOT.nbm`
 
 ### Build Individual Plugin
 
 ```bash
-# Claude only
-mvn clean package -pl claude
+# AI Assistants
+mvn clean package -pl ai/claude
+mvn clean package -pl ai/gemini
+mvn clean package -pl ai/chatgpt
 
-# Gemini only
-mvn clean package -pl gemini
+# Language Support
+mvn clean package -pl languages/common
+mvn clean package -pl languages/python
 
-# ChatGPT only
-mvn clean package -pl chatgpt
+# Build all AI plugins only
+mvn clean package -pl ai/claude,ai/gemini,ai/chatgpt
+
+# Build all language plugins only
+mvn clean package -pl languages/common,languages/python
 ```
 
 ### Install in NetBeans
@@ -61,18 +75,26 @@ netbeans-plugins/
 ├── README.md                  # This file
 ├── BUILD_STATUS.md            # Build troubleshooting
 ├── PLUGINS_SUMMARY.md         # Feature comparison
-├── claude/                    # Claude plugin module
-│   ├── pom.xml
-│   ├── README.md
-│   └── src/...
-├── gemini/                    # Gemini plugin module
-│   ├── pom.xml
-│   ├── README.md
-│   └── src/...
-└── chatgpt/                   # ChatGPT plugin module
-    ├── pom.xml
-    ├── README.md
-    └── src/...
+├── ai/                        # AI Assistant Plugins
+│   ├── claude/                # Claude plugin module
+│   │   ├── pom.xml
+│   │   ├── README.md
+│   │   └── src/...
+│   ├── gemini/                # Gemini plugin module
+│   │   ├── pom.xml
+│   │   ├── README.md
+│   │   └── src/...
+│   └── chatgpt/               # ChatGPT plugin module
+│       ├── pom.xml
+│       ├── README.md
+│       └── src/...
+└── languages/                 # Language Support Plugins
+    ├── common/                # Shared language utilities
+    │   ├── pom.xml
+    │   └── src/...
+    └── python/                # Python LSP plugin
+        ├── pom.xml
+        └── src/...
 ```
 
 ## Prerequisites
@@ -109,12 +131,19 @@ netbeans-plugins/
 
 ## Documentation
 
+### General
 - **[BUILD_STATUS.md](BUILD_STATUS.md)** - Maven build issues and solutions
 - **[PLUGINS_SUMMARY.md](PLUGINS_SUMMARY.md)** - Feature comparison across all plugins
 - **[NETBEANS_PLUGINS_OVERVIEW.md](NETBEANS_PLUGINS_OVERVIEW.md)** - Complete project overview
-- **[claude/README.md](claude/README.md)** - Claude plugin documentation
-- **[gemini/README.md](gemini/README.md)** - Gemini plugin documentation
-- **[chatgpt/README.md](chatgpt/README.md)** - ChatGPT plugin documentation
+
+### AI Plugins
+- **[ai/claude/README.md](ai/claude/README.md)** - Claude plugin documentation
+- **[ai/gemini/README.md](ai/gemini/README.md)** - Gemini plugin documentation
+- **[ai/chatgpt/README.md](ai/chatgpt/README.md)** - ChatGPT plugin documentation
+
+### Language Plugins
+- **languages/common/** - Shared language support utilities
+- **languages/python/** - Python LSP integration
 
 ## Configuration
 
@@ -152,16 +181,18 @@ Right-click on selected code:
 
 ## Statistics
 
-### Per Plugin
-- **Java Classes**: 23
+### AI Plugins (per plugin)
+- **Java Classes**: ~23
 - **Lines of Code**: ~4,000
 - **Packages**: 7
 - **Features**: 6
 
+### Language Plugins
+- **Common Module**: Shared abstractions
+- **Python Module**: LSP-based Python support
+
 ### Total Project
-- **Modules**: 3
-- **Java Classes**: 69
-- **Lines of Code**: ~12,000
+- **Modules**: 5 (3 AI + 2 Language)
 - **Can Install Together**: ✅ Yes
 - **Conflicts**: ❌ None
 
@@ -216,7 +247,11 @@ See **BUILD_STATUS.md** for solutions to corporate Maven mirror issues.
 mvn clean install -N
 
 # Then build module
-cd claude
+cd ai/claude
+mvn clean package
+
+# Or for language plugins
+cd languages/python
 mvn clean package
 ```
 

@@ -6,19 +6,16 @@
 
     <parent>
         <groupId>org.flossware.netbeans</groupId>
-        <artifactId>netbeans-ai-plugins</artifactId>
+        <artifactId>netbeans-plugins</artifactId>
         <version>1.0</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>netbeans-claude-integration</artifactId>
+    <artifactId>netbeans-chatgpt-integration</artifactId>
     <packaging>nbm</packaging>
 
-    <name>NetBeans Claude Integration</name>
-    <description>Claude AI integration for Apache NetBeans IDE</description>
-
-    <properties>
-        <anthropic.version>0.1.0</anthropic.version>
-    </properties>
+    <name>NetBeans ChatGPT Integration</name>
+    <description>OpenAI ChatGPT integration for Apache NetBeans IDE</description>
 
     <dependencies>
         <!-- NetBeans Platform Dependencies (from parent) -->
@@ -95,11 +92,11 @@
             <artifactId>org-netbeans-modules-lexer</artifactId>
         </dependency>
 
-        <!-- Claude-specific: Anthropic SDK -->
+        <!-- ChatGPT-specific: OpenAI SDK -->
         <dependency>
-            <groupId>com.anthropic</groupId>
-            <artifactId>anthropic-java</artifactId>
-            <version>${anthropic.version}</version>
+            <groupId>com.theokanning.openai-gpt3-java</groupId>
+            <artifactId>service</artifactId>
+            <version>0.18.2</version>
         </dependency>
 
         <!-- Common dependencies (from parent) -->
