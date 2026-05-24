@@ -145,6 +145,13 @@
             <plugin>
                 <groupId>org.apache.netbeans.utilities</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
+                <configuration>
+                    <useOSGiDependencies>false</useOSGiDependencies>
+                    <verifyRuntime>skip</verifyRuntime>
+                    <publicPackages>
+                        <publicPackage>org.flossware.netbeans.chatgpt.*</publicPackage>
+                    </publicPackages>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
