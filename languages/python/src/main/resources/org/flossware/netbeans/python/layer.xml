@@ -37,6 +37,11 @@
                 <attr name="displayName" bundlevalue="org.flossware.netbeans.python.Bundle#CTL_RunPythonAction"/>
             </file>
         </folder>
+        <folder name="Debug">
+            <file name="org-flossware-netbeans-python-debugger-DebugPythonAction.instance">
+                <attr name="instanceCreate" methodvalue="org.flossware.netbeans.python.debugger.DebugPythonAction.create"/>
+            </file>
+        </folder>
     </folder>
 
     <!-- Menu -->

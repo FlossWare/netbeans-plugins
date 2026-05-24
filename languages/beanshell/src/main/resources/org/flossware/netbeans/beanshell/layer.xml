@@ -78,6 +78,11 @@
                 <attr name="instanceCreate" methodvalue="org.flossware.netbeans.beanshell.execution.RunBeanShellAction.create"/>
             </file>
         </folder>
+        <folder name="Debug">
+            <file name="org-flossware-netbeans-beanshell-debugger-DebugBeanShellAction.instance">
+                <attr name="instanceCreate" methodvalue="org.flossware.netbeans.beanshell.debugger.DebugBeanShellAction.create"/>
+            </file>
+        </folder>
         <folder name="Window">
             <file name="org-flossware-netbeans-beanshell-ui-BeanShellConsoleTopComponent.instance">
                 <attr name="component" methodvalue="org.flossware.netbeans.beanshell.ui.BeanShellConsoleTopComponent.create"/>

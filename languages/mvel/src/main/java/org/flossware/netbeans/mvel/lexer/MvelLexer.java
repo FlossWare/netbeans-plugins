@@ -54,7 +54,7 @@ public class MvelLexer implements Lexer<MvelTokenId> {
         while (true) {
             int c = info.input().read();
 
-            if (c == LexerRestartInfo.EOI) {
+            if (c == org.netbeans.spi.lexer.LexerInput.EOF) {
                 return null;
             }
 
@@ -62,7 +62,7 @@ public class MvelLexer implements Lexer<MvelTokenId> {
             if (Character.isWhitespace(c)) {
                 while (true) {
                     c = info.input().read();
-                    if (c == LexerRestartInfo.EOI || !Character.isWhitespace(c)) {
+                    if (c == org.netbeans.spi.lexer.LexerInput.EOF || !Character.isWhitespace(c)) {
                         info.input().backup(1);
                         return info.tokenFactory().createToken(MvelTokenId.WHITESPACE);
                     }
@@ -75,7 +75,7 @@ public class MvelLexer implements Lexer<MvelTokenId> {
                 if (c == '/') {
                     while (true) {
                         c = info.input().read();
-                        if (c == LexerRestartInfo.EOI || c == '\n' || c == '\r') {
+                        if (c == org.netbeans.spi.lexer.LexerInput.EOF || c == '\n' || c == '\r') {
                             info.input().backup(1);
                             return info.tokenFactory().createToken(MvelTokenId.COMMENT);
                         }
@@ -84,7 +84,7 @@ public class MvelLexer implements Lexer<MvelTokenId> {
                     // Multi-line comment
                     while (true) {
                         c = info.input().read();
-                        if (c == LexerRestartInfo.EOI) {
+                        if (c == org.netbeans.spi.lexer.LexerInput.EOF) {
                             return info.tokenFactory().createToken(MvelTokenId.COMMENT);
                         }
                         if (c == '*') {
@@ -107,7 +107,7 @@ public class MvelLexer implements Lexer<MvelTokenId> {
                 boolean escaped = false;
                 while (true) {
                     c = info.input().read();
-                    if (c == LexerRestartInfo.EOI) {
+                    if (c == org.netbeans.spi.lexer.LexerInput.EOF) {
                         return info.tokenFactory().createToken(MvelTokenId.STRING);
                     }
                     if (escaped) {
@@ -128,7 +128,7 @@ public class MvelLexer implements Lexer<MvelTokenId> {
             if (Character.isDigit(c)) {
                 while (true) {
                     c = info.input().read();
-                    if (c == LexerRestartInfo.EOI ||
+                    if (c == org.netbeans.spi.lexer.LexerInput.EOF ||
                         (!Character.isDigit(c) && c != '.' && c != 'e' && c != 'E' &&
                          c != 'x' && c != 'X' && c != 'L' && c != 'l' && c != 'f' && c != 'F' &&
                          c != 'd' && c != 'D')) {
@@ -144,7 +144,7 @@ public class MvelLexer implements Lexer<MvelTokenId> {
                 sb.append((char) c);
                 while (true) {
                     c = info.input().read();
-                    if (c == LexerRestartInfo.EOI || !Character.isJavaIdentifierPart(c)) {
+                    if (c == org.netbeans.spi.lexer.LexerInput.EOF || !Character.isJavaIdentifierPart(c)) {
                         info.input().backup(1);
                         String text = sb.toString();
                         if (KEYWORDS.contains(text)) {

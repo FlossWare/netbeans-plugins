@@ -78,6 +78,11 @@
                 <attr name="instanceCreate" methodvalue="org.flossware.netbeans.mvel.execution.RunMvelAction.create"/>
             </file>
         </folder>
+        <folder name="Debug">
+            <file name="org-flossware-netbeans-mvel-debugger-DebugMvelAction.instance">
+                <attr name="instanceCreate" methodvalue="org.flossware.netbeans.mvel.debugger.DebugMvelAction.create"/>
+            </file>
+        </folder>
         <folder name="Window">
             <file name="org-flossware-netbeans-mvel-ui-MvelConsoleTopComponent.instance">
                 <attr name="component" methodvalue="org.flossware.netbeans.mvel.ui.MvelConsoleTopComponent.create"/>

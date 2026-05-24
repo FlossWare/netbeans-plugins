@@ -54,7 +54,7 @@ public class PythonLexer implements Lexer<PythonTokenId> {
         while (true) {
             int c = info.input().read();
 
-            if (c == LexerRestartInfo.EOI) {
+            if (c == org.netbeans.spi.lexer.LexerInput.EOF) {
                 return null;
             }
 
@@ -62,7 +62,7 @@ public class PythonLexer implements Lexer<PythonTokenId> {
             if (Character.isWhitespace(c)) {
                 while (true) {
                     c = info.input().read();
-                    if (c == LexerRestartInfo.EOI || !Character.isWhitespace(c)) {
+                    if (c == org.netbeans.spi.lexer.LexerInput.EOF || !Character.isWhitespace(c)) {
                         info.input().backup(1);
                         return info.tokenFactory().createToken(PythonTokenId.WHITESPACE);
                     }
@@ -73,7 +73,7 @@ public class PythonLexer implements Lexer<PythonTokenId> {
             if (c == '#') {
                 while (true) {
                     c = info.input().read();
-                    if (c == LexerRestartInfo.EOI || c == '\n' || c == '\r') {
+                    if (c == org.netbeans.spi.lexer.LexerInput.EOF || c == '\n' || c == '\r') {
                         info.input().backup(1);
                         return info.tokenFactory().createToken(PythonTokenId.COMMENT);
                     }
@@ -102,7 +102,7 @@ public class PythonLexer implements Lexer<PythonTokenId> {
                 boolean escaped = false;
                 while (true) {
                     c = info.input().read();
-                    if (c == LexerRestartInfo.EOI) {
+                    if (c == org.netbeans.spi.lexer.LexerInput.EOF) {
                         return info.tokenFactory().createToken(PythonTokenId.STRING);
                     }
                     if (escaped) {
@@ -136,7 +136,7 @@ public class PythonLexer implements Lexer<PythonTokenId> {
             if (Character.isDigit(c)) {
                 while (true) {
                     c = info.input().read();
-                    if (c == LexerRestartInfo.EOI ||
+                    if (c == org.netbeans.spi.lexer.LexerInput.EOF ||
                         (!Character.isDigit(c) && c != '.' && c != 'e' && c != 'E' &&
                          c != 'x' && c != 'X' && c != 'b' && c != 'B' && c != 'o' && c != 'O')) {
                         info.input().backup(1);
@@ -151,7 +151,7 @@ public class PythonLexer implements Lexer<PythonTokenId> {
                 sb.append((char) c);
                 while (true) {
                     c = info.input().read();
-                    if (c == LexerRestartInfo.EOI || !Character.isJavaIdentifierPart(c)) {
+                    if (c == org.netbeans.spi.lexer.LexerInput.EOF || !Character.isJavaIdentifierPart(c)) {
                         info.input().backup(1);
                         String text = sb.toString();
                         if (KEYWORDS.contains(text)) {

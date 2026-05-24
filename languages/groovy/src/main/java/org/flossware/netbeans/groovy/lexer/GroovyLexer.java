@@ -57,7 +57,7 @@ public class GroovyLexer implements Lexer<GroovyTokenId> {
         while (true) {
             int c = info.input().read();
 
-            if (c == LexerRestartInfo.EOI) {
+            if (c == org.netbeans.spi.lexer.LexerInput.EOF) {
                 return null;
             }
 
@@ -65,7 +65,7 @@ public class GroovyLexer implements Lexer<GroovyTokenId> {
             if (Character.isWhitespace(c)) {
                 while (true) {
                     c = info.input().read();
-                    if (c == LexerRestartInfo.EOI || !Character.isWhitespace(c)) {
+                    if (c == org.netbeans.spi.lexer.LexerInput.EOF || !Character.isWhitespace(c)) {
                         info.input().backup(1);
                         return info.tokenFactory().createToken(GroovyTokenId.WHITESPACE);
                     }
@@ -78,7 +78,7 @@ public class GroovyLexer implements Lexer<GroovyTokenId> {
                 if (c == '/') {
                     while (true) {
                         c = info.input().read();
-                        if (c == LexerRestartInfo.EOI || c == '\n' || c == '\r') {
+                        if (c == org.netbeans.spi.lexer.LexerInput.EOF || c == '\n' || c == '\r') {
                             info.input().backup(1);
                             return info.tokenFactory().createToken(GroovyTokenId.COMMENT);
                         }
@@ -87,7 +87,7 @@ public class GroovyLexer implements Lexer<GroovyTokenId> {
                     // Multi-line comment
                     while (true) {
                         c = info.input().read();
-                        if (c == LexerRestartInfo.EOI) {
+                        if (c == org.netbeans.spi.lexer.LexerInput.EOF) {
                             return info.tokenFactory().createToken(GroovyTokenId.COMMENT);
                         }
                         if (c == '*') {
@@ -126,7 +126,7 @@ public class GroovyLexer implements Lexer<GroovyTokenId> {
                 boolean escaped = false;
                 while (true) {
                     c = info.input().read();
-                    if (c == LexerRestartInfo.EOI) {
+                    if (c == org.netbeans.spi.lexer.LexerInput.EOF) {
                         return info.tokenFactory().createToken(GroovyTokenId.STRING);
                     }
                     if (escaped) {
@@ -160,7 +160,7 @@ public class GroovyLexer implements Lexer<GroovyTokenId> {
             if (Character.isDigit(c)) {
                 while (true) {
                     c = info.input().read();
-                    if (c == LexerRestartInfo.EOI ||
+                    if (c == org.netbeans.spi.lexer.LexerInput.EOF ||
                         (!Character.isDigit(c) && c != '.' && c != 'e' && c != 'E' &&
                          c != 'x' && c != 'X' && c != 'L' && c != 'l' && c != 'f' && c != 'F' &&
                          c != 'd' && c != 'D' && c != 'G' && c != 'g')) {
@@ -176,7 +176,7 @@ public class GroovyLexer implements Lexer<GroovyTokenId> {
                 sb.append((char) c);
                 while (true) {
                     c = info.input().read();
-                    if (c == LexerRestartInfo.EOI || !Character.isJavaIdentifierPart(c)) {
+                    if (c == org.netbeans.spi.lexer.LexerInput.EOF || !Character.isJavaIdentifierPart(c)) {
                         info.input().backup(1);
                         String text = sb.toString();
                         if (KEYWORDS.contains(text)) {

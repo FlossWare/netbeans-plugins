@@ -78,6 +78,11 @@
                 <attr name="instanceCreate" methodvalue="org.flossware.netbeans.groovy.execution.RunGroovyAction.create"/>
             </file>
         </folder>
+        <folder name="Debug">
+            <file name="org-flossware-netbeans-groovy-debugger-DebugGroovyAction.instance">
+                <attr name="instanceCreate" methodvalue="org.flossware.netbeans.groovy.debugger.DebugGroovyAction.create"/>
+            </file>
+        </folder>
         <folder name="Window">
             <file name="org-flossware-netbeans-groovy-ui-GroovyConsoleTopComponent.instance">
                 <attr name="component" methodvalue="org.flossware.netbeans.groovy.ui.GroovyConsoleTopComponent.create"/>
