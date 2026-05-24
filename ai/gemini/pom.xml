@@ -18,7 +18,7 @@
     <description>Google Gemini AI integration for Apache NetBeans IDE</description>
 
     <properties>
-        <google-ai.version>1.1.0</google-ai.version>
+        <google-ai.version>3.92.0</google-ai.version>
     </properties>
 
     <dependencies>
@@ -149,6 +149,13 @@
             <plugin>
                 <groupId>org.apache.netbeans.utilities</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
+                <configuration>
+                    <useOSGiDependencies>false</useOSGiDependencies>
+                    <verifyRuntime>skip</verifyRuntime>
+                    <publicPackages>
+                        <publicPackage>org.flossware.netbeans.gemini.*</publicPackage>
+                    </publicPackages>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
