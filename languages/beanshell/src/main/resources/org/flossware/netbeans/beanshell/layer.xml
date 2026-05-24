@@ -14,6 +14,17 @@
     <folder name="Editors">
         <folder name="text">
             <folder name="x-beanshell">
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.beanshell.Bundle"/>
+
+                <!-- Language Registration -->
+                <file name="language.instance">
+                    <attr name="instanceOf" stringvalue="org.netbeans.api.lexer.Language"/>
+                    <attr name="instanceCreate" methodvalue="org.flossware.netbeans.beanshell.lexer.BeanShellTokenId.language"/>
+                </file>
+                <file name="FontsColors.xml" url="FontsColors.xml">
+                    <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.beanshell.Bundle"/>
+                </file>
+
                 <!-- Code Completion -->
                 <folder name="CompletionProviders">
                     <file name="org-flossware-netbeans-beanshell-completion-BeanShellLspCompletionProvider.instance"/>

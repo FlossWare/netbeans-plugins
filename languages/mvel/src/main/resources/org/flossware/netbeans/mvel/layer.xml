@@ -14,6 +14,17 @@
     <folder name="Editors">
         <folder name="text">
             <folder name="x-mvel">
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.mvel.Bundle"/>
+
+                <!-- Language Registration -->
+                <file name="language.instance">
+                    <attr name="instanceOf" stringvalue="org.netbeans.api.lexer.Language"/>
+                    <attr name="instanceCreate" methodvalue="org.flossware.netbeans.mvel.lexer.MvelTokenId.language"/>
+                </file>
+                <file name="FontsColors.xml" url="FontsColors.xml">
+                    <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.mvel.Bundle"/>
+                </file>
+
                 <!-- Code Completion -->
                 <folder name="CompletionProviders">
                     <file name="org-flossware-netbeans-mvel-completion-MvelLspCompletionProvider.instance"/>

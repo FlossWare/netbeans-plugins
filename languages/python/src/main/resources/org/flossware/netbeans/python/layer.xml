@@ -57,4 +57,20 @@
             </file>
         </folder>
     </folder>
+
+    <!-- Language Registration -->
+    <folder name="Editors">
+        <folder name="text">
+            <folder name="x-python">
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.python.Bundle"/>
+                <file name="language.instance">
+                    <attr name="instanceOf" stringvalue="org.netbeans.api.lexer.Language"/>
+                    <attr name="instanceCreate" methodvalue="org.flossware.netbeans.python.lexer.PythonTokenId.language"/>
+                </file>
+                <file name="FontsColors.xml" url="FontsColors.xml">
+                    <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.python.Bundle"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
 </filesystem>
