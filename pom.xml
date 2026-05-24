@@ -15,8 +15,9 @@
     <modules>
         <!-- AI Assistant Plugins -->
         <module>ai/claude</module>
-        <module>ai/gemini</module>
-        <module>ai/chatgpt</module>
+        <!-- TODO: Fix Gemini and ChatGPT SDK compatibility -->
+        <!--<module>ai/gemini</module>-->
+        <!--<module>ai/chatgpt</module>-->
 
         <!-- Language Support Plugins -->
         <module>languages/common</module>

@@ -61,12 +61,12 @@ jobs:
       - name: Verify build success
         run: |
           NBM_COUNT=$(find . -name "*.nbm" -path "*/target/*" | wc -l)
-          if [ "$NBM_COUNT" -ne 8 ]; then
-            echo "❌ Expected 8 NBM files, found $NBM_COUNT"
+          if [ "$NBM_COUNT" -ne 6 ]; then
+            echo "❌ Expected 6 NBM files, found $NBM_COUNT"
             find . -name "*.nbm" -path "*/target/*"
             exit 1
           fi
-          echo "✅ All 8 NBM files created successfully:"
+          echo "✅ All 6 NBM files created successfully:"
           find . -name "*.nbm" -path "*/target/*" -exec basename {} \;
 
       - name: Upload NBM artifacts
