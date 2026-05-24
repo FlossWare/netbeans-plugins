@@ -31,6 +31,9 @@
         <module>languages/zsh</module>
         <module>languages/erlang</module>
         <module>languages/ruby</module>
+        <module>languages/prolog</module>
+        <module>languages/lisp</module>
+        <module>languages/kotlin</module>
     </modules>
 
     <properties>

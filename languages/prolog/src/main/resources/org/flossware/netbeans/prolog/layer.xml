@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "https://netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <!-- Register Prolog language -->
+    <folder name="Editors">
+        <folder name="text">
+            <folder name="x-prolog">
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.prolog.Bundle"/>
+                <file name="language.instance">
+                    <attr name="instanceOf" stringvalue="org.netbeans.api.lexer.Language"/>
+                    <attr name="instanceCreate" methodvalue="org.flossware.netbeans.prolog.lexer.PrologTokenId.language"/>
+                </file>
+                <folder name="FontsColors">
+                    <folder name="NetBeans">
+                        <folder name="Defaults">
+                            <file name="FontsColors.xml" url="FontsColors.xml">
+                                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.prolog.Bundle"/>
+                            </file>
+                        </folder>
+                    </folder>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+
+    <!-- Register debug action -->
+    <folder name="Loaders">
+        <folder name="text">
+            <folder name="x-prolog">
+                <folder name="Actions">
+                    <file name="org-flossware-netbeans-prolog-debugger-DebugPrologAction.instance">
+                        <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                        <attr name="delegate" methodvalue="org.flossware.netbeans.prolog.debugger.DebugPrologAction.class"/>
+                        <attr name="displayName" bundlevalue="org.flossware.netbeans.prolog.debugger.Bundle#CTL_DebugPrologAction"/>
+                        <attr name="noIconInMenu" boolvalue="false"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

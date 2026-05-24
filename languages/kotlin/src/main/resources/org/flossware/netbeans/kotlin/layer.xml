@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "https://netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Editors">
+        <folder name="text">
+            <folder name="x-kotlin">
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.kotlin.Bundle"/>
+                <file name="language.instance">
+                    <attr name="instanceOf" stringvalue="org.netbeans.api.lexer.Language"/>
+                    <attr name="instanceCreate" methodvalue="org.flossware.netbeans.kotlin.lexer.KotlinTokenId.language"/>
+                </file>
+                <folder name="FontsColors">
+                    <folder name="NetBeans">
+                        <folder name="Defaults">
+                            <file name="FontsColors.xml" url="FontsColors.xml">
+                                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.kotlin.Bundle"/>
+                            </file>
+                        </folder>
+                    </folder>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+
+    <folder name="Loaders">
+        <folder name="text">
+            <folder name="x-kotlin">
+                <folder name="Actions">
+                    <file name="org-flossware-netbeans-kotlin-debugger-DebugKotlinAction.instance">
+                        <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                        <attr name="delegate" methodvalue="org.flossware.netbeans.kotlin.debugger.DebugKotlinAction.class"/>
+                        <attr name="displayName" bundlevalue="org.flossware.netbeans.kotlin.debugger.Bundle#CTL_DebugKotlinAction"/>
+                        <attr name="noIconInMenu" boolvalue="false"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>
