@@ -28,6 +28,7 @@
         <module>languages/bash</module>
         <module>languages/powershell</module>
         <module>languages/batch</module>
+        <module>languages/zsh</module>
     </modules>
 
     <properties>
