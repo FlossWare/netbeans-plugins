@@ -25,7 +25,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.prefs.Preferences;
-import okhttp3.*;
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.openide.util.NbPreferences;
 
 /**
@@ -135,6 +140,18 @@ public class GeminiClient {
         conversationHistory.add(new ConversationMessage("model", response));
 
         return response;
+    }
+
+    /**
+     * Send a message with code context and streaming response
+     */
+    public String sendMessageWithContextStreaming(String userMessage, String codeContext, Consumer<String> onChunk) throws IOException {
+        String fullMessage = String.format(
+            "Here is the code context:\n\n```\n%s\n```\n\nUser question: %s",
+            codeContext,
+            userMessage
+        );
+        return sendMessageStreaming(fullMessage, onChunk);
     }
 
     /**

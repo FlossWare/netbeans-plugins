@@ -118,43 +118,59 @@ public class ChatGPTClient {
     }
 
     /**
-     * Send a message with streaming response
+     * Send a message with streaming response (synchronous)
      */
-    public void sendMessageStreaming(String message, Consumer<String> onChunk, Runnable onComplete) {
+    public String sendMessageStreaming(String message, Consumer<String> onChunk) {
+        if (service == null) {
+            throw new IllegalStateException("API key not configured");
+        }
+
+        conversationHistory.add(new ChatMessage(ChatMessageRole.USER.value(), message));
+
+        ChatCompletionRequest request = ChatCompletionRequest.builder()
+                .model(model)
+                .messages(conversationHistory)
+                .maxTokens(maxTokens)
+                .temperature(temperature)
+                .build();
+
+        StringBuilder fullResponse = new StringBuilder();
+
+        service.streamChatCompletion(request)
+                .doOnNext(chunk -> {
+                    String content = chunk.getChoices().get(0).getMessage().getContent();
+                    if (content != null) {
+                        fullResponse.append(content);
+                        if (onChunk != null) {
+                            onChunk.accept(content);
+                        }
+                    }
+                })
+                .doOnComplete(() -> {
+                    conversationHistory.add(new ChatMessage(ChatMessageRole.ASSISTANT.value(), fullResponse.toString()));
+                })
+                .blockingSubscribe();
+
+        return fullResponse.toString();
+    }
+
+    /**
+     * Send a message with streaming response (asynchronous)
+     */
+    public void sendMessageStreamingAsync(String message, Consumer<String> onChunk, Runnable onComplete) {
         CompletableFuture.runAsync(() -> {
             try {
-                if (service == null) {
-                    throw new IllegalStateException("API key not configured");
+                sendMessageStreaming(message, onChunk);
+                if (onComplete != null) {
+                    onComplete.run();
                 }
-
-                conversationHistory.add(new ChatMessage(ChatMessageRole.USER.value(), message));
-
-                ChatCompletionRequest request = ChatCompletionRequest.builder()
-                        .model(model)
-                        .messages(conversationHistory)
-                        .maxTokens(maxTokens)
-                        .temperature(temperature)
-                        .build();
-
-                StringBuilder fullResponse = new StringBuilder();
-
-                service.streamChatCompletion(request)
-                        .doOnNext(chunk -> {
-                            String content = chunk.getChoices().get(0).getMessage().getContent();
-                            if (content != null) {
-                                fullResponse.append(content);
-                                onChunk.accept(content);
-                            }
-                        })
-                        .doOnComplete(() -> {
-                            conversationHistory.add(new ChatMessage(ChatMessageRole.ASSISTANT.value(), fullResponse.toString()));
-                            onComplete.run();
-                        })
-                        .blockingSubscribe();
-
             } catch (Exception e) {
-                onChunk.accept("Error: " + e.getMessage());
-                onComplete.run();
+                if (onChunk != null) {
+                    onChunk.accept("Error: " + e.getMessage());
+                }
+                if (onComplete != null) {
+                    onComplete.run();
+                }
             }
         });
     }
@@ -172,6 +188,28 @@ public class ChatGPTClient {
      */
     public CompletableFuture<String> sendMessageWithContextAsync(String message, String context) {
         return CompletableFuture.supplyAsync(() -> sendMessageWithContext(message, context));
+    }
+
+    /**
+     * Send a message with context and streaming response
+     */
+    public String sendMessageWithContextStreaming(String message, String context, Consumer<String> onChunk) {
+        String fullMessage = "Context:\n" + context + "\n\nQuestion:\n" + message;
+        return sendMessageStreaming(fullMessage, onChunk);
+    }
+
+    /**
+     * Check if API key is configured
+     */
+    public boolean isConfigured() {
+        return apiKey != null && !apiKey.isEmpty() && service != null;
+    }
+
+    /**
+     * Get conversation history size
+     */
+    public int getHistorySize() {
+        return conversationHistory.size();
     }
 
     /**

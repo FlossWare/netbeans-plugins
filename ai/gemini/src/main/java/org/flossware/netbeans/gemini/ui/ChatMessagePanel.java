@@ -22,7 +22,10 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import org.flossware.netbeans.gemini.util.CodeExtractor;
 import org.flossware.netbeans.gemini.util.CodeExtractor.CodeBlock;
 

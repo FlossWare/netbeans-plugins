@@ -18,9 +18,15 @@
 package org.flossware.netbeans.gemini.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import org.flossware.netbeans.gemini.util.CodeExtractor.CodeBlock;
 import org.flossware.netbeans.gemini.util.EditorUtil;
 import org.openide.DialogDescriptor;
