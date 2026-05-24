@@ -163,6 +163,11 @@
                 <artifactId>org-openide-util-ui</artifactId>
                 <version>${netbeans.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.netbeans.api</groupId>
+                <artifactId>org-netbeans-modules-projectuiapi-base</artifactId>
+                <version>${netbeans.version}</version>
+            </dependency>
 
             <!-- LSP Support for Language Plugins -->
             <dependency>
