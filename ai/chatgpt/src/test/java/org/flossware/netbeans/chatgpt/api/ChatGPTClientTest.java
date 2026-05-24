@@ -75,14 +75,14 @@ class ChatGPTClientTest {
 
     @Test
     void testSendMessageStreaming_ThrowsWhenNotConfigured() {
-        assertThatThrownBy(() -> client.sendMessageStreaming("Hello", chunk -> {}, () -> {}))
+        assertThatThrownBy(() -> client.sendMessageStreaming("Hello", chunk -> {}))
             .isInstanceOf(IllegalStateException.class)
             .hasMessageContaining("API key not configured");
     }
 
     @Test
     void testSendMessageWithContextStreaming_ThrowsWhenNotConfigured() {
-        assertThatThrownBy(() -> client.sendMessageWithContextStreaming("Question", "Context", chunk -> {}, () -> {}))
+        assertThatThrownBy(() -> client.sendMessageWithContextStreaming("Question", "Context", chunk -> {}))
             .isInstanceOf(IllegalStateException.class)
             .hasMessageContaining("API key not configured");
     }

@@ -19,6 +19,8 @@ package org.flossware.netbeans.python;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import org.netbeans.junit.NbTestCase;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -69,7 +71,10 @@ public abstract class PythonIntegrationTestBase extends NbTestCase {
      */
     protected FileObject createPythonFile(String name, String content) throws IOException {
         FileObject file = workDirFileObject.createData(name);
-        file.asText().replace(0, 0, content, null);
+        try (OutputStream os = file.getOutputStream();
+             PrintWriter pw = new PrintWriter(os)) {
+            pw.print(content);
+        }
         return file;
     }
 
@@ -112,7 +117,10 @@ public abstract class PythonIntegrationTestBase extends NbTestCase {
         FileObject setupPy = projectDir.createData("setup.py");
         String setupContent = "from setuptools import setup\n"
                 + "setup(name='" + projectName + "', version='1.0.0')\n";
-        setupPy.asText().replace(0, 0, setupContent, null);
+        try (OutputStream os = setupPy.getOutputStream();
+             PrintWriter pw = new PrintWriter(os)) {
+            pw.print(setupContent);
+        }
 
         // Create a Python source file
         FileObject mainPy = projectDir.createData("main.py");
@@ -121,7 +129,10 @@ public abstract class PythonIntegrationTestBase extends NbTestCase {
                 + "\n"
                 + "if __name__ == '__main__':\n"
                 + "    main()\n";
-        mainPy.asText().replace(0, 0, mainContent, null);
+        try (OutputStream os = mainPy.getOutputStream();
+             PrintWriter pw = new PrintWriter(os)) {
+            pw.print(mainContent);
+        }
 
         return projectDir;
     }
