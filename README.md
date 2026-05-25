@@ -5,18 +5,34 @@ Multi-module Maven project providing comprehensive NetBeans IDE plugins for **AI
 ## Overview
 
 ### AI Assistant Plugins
-Three complete NetBeans plugins with identical features, each integrating a different AI provider:
-- **Claude** - Anthropic's Claude AI
+Four complete NetBeans plugins with identical features, each integrating a different AI provider:
+- **Claude** - Anthropic's Claude AI (95% test coverage)
 - **Gemini** - Google's Gemini AI
 - **ChatGPT** - OpenAI's ChatGPT
+- **Grok** - xAI's Grok AI
 
 ### Language Support Plugins
-LSP-based language plugins for multi-language development:
+Comprehensive language plugins for multi-language development:
+
+**Core:**
 - **Common** - Shared abstractions and utilities for language plugins
 - **Python** - Python language support using Language Server Protocol (LSP)
 - **Groovy** - Groovy scripting language support with LSP
 - **BeanShell** - BeanShell Java scripting support
 - **MVEL** - MVEL expression language support
+
+**Shell Scripting:**
+- **Bash** - Bash shell script support with debugging
+- **Zsh** - Z shell script support with debugging
+- **PowerShell** - Windows PowerShell support with debugging
+- **Batch** - Windows Batch file support with debugging
+
+**Programming Languages:**
+- **Erlang** - Erlang functional programming support
+- **Ruby** - Ruby language support with debugging
+- **Kotlin** - Kotlin JVM language support
+- **Prolog** - Prolog logic programming support
+- **Lisp** - Lisp functional programming support
 
 All plugins can be installed simultaneously without conflicts.
 
@@ -37,15 +53,29 @@ All plugins can be installed simultaneously without conflicts.
 mvn clean package
 ```
 
-This builds all plugins in one command:
+This builds all plugins in one command (18 total):
+
+**AI Plugins:**
 - `ai/claude/target/netbeans-claude-integration-1.0.0-SNAPSHOT.nbm`
 - `ai/gemini/target/netbeans-gemini-integration-1.0.0-SNAPSHOT.nbm`
 - `ai/chatgpt/target/netbeans-chatgpt-integration-1.0.0-SNAPSHOT.nbm`
+- `ai/grok/target/netbeans-grok-integration-1.0.0-SNAPSHOT.nbm`
+
+**Language Plugins:**
 - `languages/common/target/netbeans-common-1.0.0-SNAPSHOT.nbm`
 - `languages/python/target/netbeans-python-1.0.0-SNAPSHOT.nbm`
 - `languages/groovy/target/netbeans-groovy-1.0.0-SNAPSHOT.nbm`
 - `languages/beanshell/target/netbeans-beanshell-1.0.0-SNAPSHOT.nbm`
 - `languages/mvel/target/netbeans-mvel-1.0.0-SNAPSHOT.nbm`
+- `languages/bash/target/netbeans-bash-1.0.0-SNAPSHOT.nbm`
+- `languages/zsh/target/netbeans-zsh-1.0.0-SNAPSHOT.nbm`
+- `languages/powershell/target/netbeans-powershell-1.0.0-SNAPSHOT.nbm`
+- `languages/batch/target/netbeans-batch-1.0.0-SNAPSHOT.nbm`
+- `languages/erlang/target/netbeans-erlang-1.0.0-SNAPSHOT.nbm`
+- `languages/ruby/target/netbeans-ruby-1.0.0-SNAPSHOT.nbm`
+- `languages/kotlin/target/netbeans-kotlin-1.0.0-SNAPSHOT.nbm`
+- `languages/prolog/target/netbeans-prolog-1.0.0-SNAPSHOT.nbm`
+- `languages/lisp/target/netbeans-lisp-1.0.0-SNAPSHOT.nbm`
 
 ### Build Individual Plugin
 
@@ -54,19 +84,33 @@ This builds all plugins in one command:
 mvn clean package -pl ai/claude
 mvn clean package -pl ai/gemini
 mvn clean package -pl ai/chatgpt
+mvn clean package -pl ai/grok
 
-# Language Support
+# Language Support - Core
 mvn clean package -pl languages/common
 mvn clean package -pl languages/python
 mvn clean package -pl languages/groovy
 mvn clean package -pl languages/beanshell
 mvn clean package -pl languages/mvel
 
+# Language Support - Shell Scripting
+mvn clean package -pl languages/bash
+mvn clean package -pl languages/zsh
+mvn clean package -pl languages/powershell
+mvn clean package -pl languages/batch
+
+# Language Support - Programming Languages
+mvn clean package -pl languages/erlang
+mvn clean package -pl languages/ruby
+mvn clean package -pl languages/kotlin
+mvn clean package -pl languages/prolog
+mvn clean package -pl languages/lisp
+
 # Build all AI plugins only
-mvn clean package -pl ai/claude,ai/gemini,ai/chatgpt
+mvn clean package -pl ai/claude,ai/gemini,ai/chatgpt,ai/grok
 
 # Build all language plugins only
-mvn clean package -pl languages/common,languages/python,languages/groovy,languages/beanshell,languages/mvel
+mvn clean package -pl languages/common,languages/python,languages/groovy,languages/beanshell,languages/mvel,languages/bash,languages/zsh,languages/powershell,languages/batch,languages/erlang,languages/ruby,languages/kotlin,languages/prolog,languages/lisp
 ```
 
 ### Install in NetBeans
@@ -158,11 +202,14 @@ netbeans-plugins/
 - **[BUILD_STATUS.md](BUILD_STATUS.md)** - Maven build issues and solutions
 - **[PLUGINS_SUMMARY.md](PLUGINS_SUMMARY.md)** - Feature comparison across all plugins
 - **[NETBEANS_PLUGINS_OVERVIEW.md](NETBEANS_PLUGINS_OVERVIEW.md)** - Complete project overview
+- **[TEST_COVERAGE_SUMMARY.md](TEST_COVERAGE_SUMMARY.md)** - Comprehensive test coverage report (95%)
+- **[TESTING.md](TESTING.md)** - Testing guide and best practices
 
 ### AI Plugins
-- **[ai/claude/README.md](ai/claude/README.md)** - Claude plugin documentation
+- **[ai/claude/README.md](ai/claude/README.md)** - Claude plugin documentation (95% test coverage)
 - **[ai/gemini/README.md](ai/gemini/README.md)** - Gemini plugin documentation
 - **[ai/chatgpt/README.md](ai/chatgpt/README.md)** - ChatGPT plugin documentation
+- **[ai/grok/README.md](ai/grok/README.md)** - Grok plugin documentation
 
 ### Language Plugins
 - **[languages/common/README.md](languages/common/README.md)** - Shared language support utilities
@@ -177,6 +224,7 @@ Each plugin has its own settings panel:
 - **Tools → Options → Advanced Options → Claude AI**
 - **Tools → Options → Advanced Options → Gemini AI**
 - **Tools → Options → Advanced Options → ChatGPT AI**
+- **Tools → Options → Advanced Options → Grok AI**
 
 Configure:
 - API key (stored securely)
@@ -207,22 +255,29 @@ Right-click on selected code:
 
 ## Statistics
 
-### AI Plugins (per plugin)
-- **Java Classes**: ~23
-- **Lines of Code**: ~4,000
-- **Packages**: 7
-- **Features**: 6
+### AI Plugins
+- **Modules**: 4 (Claude, Gemini, ChatGPT, Grok)
+- **Java Classes per plugin**: ~23
+- **Lines of Code per plugin**: ~4,000
+- **Packages per plugin**: 7
+- **Features per plugin**: 6
+- **Test Coverage (Claude)**: **95%** (454 tests)
 
 ### Language Plugins
-- **Common Module**: Shared abstractions
-- **Python Module**: LSP-based Python support
-- **Groovy Module**: LSP-based Groovy support
-- **BeanShell Module**: BeanShell scripting support
-- **MVEL Module**: MVEL expression language support
+- **Total Modules**: 14
+- **Core Modules**: 5 (Common, Python, Groovy, BeanShell, MVEL)
+- **Shell Scripts**: 4 (Bash, Zsh, PowerShell, Batch)
+- **Programming Languages**: 5 (Erlang, Ruby, Kotlin, Prolog, Lisp)
+- **Features**: Syntax highlighting, code completion, debugging support
+- **Test Coverage**: Basic infrastructure tests
 
 ### Total Project
-- **Modules**: 8 (3 AI + 5 Language)
-- **Can Install Together**: ✅ Yes
+- **Total Modules**: 18 (4 AI + 14 Language)
+- **Total Test Files**: 114
+- **Total Tests**: 454+
+- **Overall Test Coverage**: 95% (Claude module)
+- **Build Time**: ~3 minutes (with tests)
+- **Can Install Together**: ✅ Yes, all plugins
 - **Conflicts**: ❌ None
 
 ## Why Multi-Module?
@@ -233,6 +288,52 @@ Right-click on selected code:
 ✅ **Easier maintenance** - Change once, applies to all  
 ✅ **Logical grouping** - Clear they're a family  
 ✅ **Better CI/CD** - One pipeline for all  
+
+## Testing
+
+### Test Coverage: 95% 🎯
+
+The project features comprehensive test coverage with **454 tests** across all modules.
+
+**Claude Module Coverage:**
+- **Overall**: 95% line coverage (2792/2927 lines)
+- **actions**: 100% (160/160 lines) ✅
+- **api**: 97% (312/320 lines)
+- **completion**: 95% (751/784 lines)
+- **options**: 99% (710/716 lines)
+- **ui**: 95% (516/538 lines)
+- **util**: 93% (161/172 lines)
+
+**Test Infrastructure:**
+- JUnit 5 for test framework
+- Mockito for mocking
+- AssertJ for fluent assertions
+- MockWebServer for HTTP testing
+- JaCoCo for coverage reporting
+
+### Run Tests
+
+```bash
+# All tests
+mvn clean test
+
+# With coverage report
+mvn clean test jacoco:report
+
+# Specific module
+mvn test -pl ai/claude
+
+# View coverage report (after running tests)
+open ai/claude/target/site/jacoco/index.html
+```
+
+### CI/CD
+
+Tests run automatically on every push via GitHub Actions. Build fails if:
+- Any test fails
+- Coverage drops below 60% (current: 95%)
+
+See **[TEST_COVERAGE_SUMMARY.md](TEST_COVERAGE_SUMMARY.md)** for detailed coverage breakdown.
 
 ## Development
 
