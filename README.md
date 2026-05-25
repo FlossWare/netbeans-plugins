@@ -204,6 +204,7 @@ netbeans-plugins/
 - **[NETBEANS_PLUGINS_OVERVIEW.md](NETBEANS_PLUGINS_OVERVIEW.md)** - Complete project overview
 - **[TEST_COVERAGE_SUMMARY.md](TEST_COVERAGE_SUMMARY.md)** - Comprehensive test coverage report (95%)
 - **[TESTING.md](TESTING.md)** - Testing guide and best practices
+- **[VERSIONING.md](VERSIONING.md)** - Version format (X.Y) and auto-versioning system
 
 ### AI Plugins
 - **[ai/claude/README.md](ai/claude/README.md)** - Claude plugin documentation (95% test coverage)
@@ -334,6 +335,40 @@ Tests run automatically on every push via GitHub Actions. Build fails if:
 - Coverage drops below 60% (current: 95%)
 
 See **[TEST_COVERAGE_SUMMARY.md](TEST_COVERAGE_SUMMARY.md)** for detailed coverage breakdown.
+
+## Versioning
+
+### Version Format: X.Y
+
+This project uses **X.Y** semantic versioning (e.g., `1.0`, `1.1`, `2.0`):
+- **X**: Major version (breaking changes)
+- **Y**: Minor version (features, fixes)
+
+**Current Version**: `1.0`
+
+### Auto-Versioning
+
+Every push to `main` automatically:
+1. Increments minor version (`1.0` → `1.1`)
+2. Builds all 18 modules
+3. Runs 454 tests
+4. Deploys to PackageCloud
+5. Commits version bump
+6. Creates git tag
+
+See **[VERSIONING.md](VERSIONING.md)** for complete details.
+
+### Manual Version Bump
+
+```bash
+# Increment minor version (1.0 → 1.1)
+mvn build-helper:parse-version versions:set \
+  -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion} \
+  versions:commit
+
+# Increment major version (1.9 → 2.0)
+mvn versions:set -DnewVersion=2.0 versions:commit
+```
 
 ## Development
 
