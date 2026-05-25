@@ -72,7 +72,7 @@ public final class GrokOptionsPanelController extends OptionsPanelController {
 
     @Override
     public HelpCtx getHelpCtx() {
-        return null;
+        return HelpCtx.DEFAULT_HELP;
     }
 
     @Override

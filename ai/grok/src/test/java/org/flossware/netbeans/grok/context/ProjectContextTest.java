@@ -57,9 +57,9 @@ class ProjectContextTest {
 
     @BeforeEach
     void setUp() {
-        // Mock ProjectUtils static methods behavior
-        when(mockProject.getProjectDirectory()).thenReturn(mockProjectDir);
-        when(mockProjectDir.getPath()).thenReturn("/home/user/test-project");
+        // Mock ProjectUtils static methods behavior (lenient for tests that don't use them)
+        lenient().when(mockProject.getProjectDirectory()).thenReturn(mockProjectDir);
+        lenient().when(mockProjectDir.getPath()).thenReturn("/home/user/test-project");
 
         context = new ProjectContext(mockProject);
     }
@@ -118,7 +118,7 @@ class ProjectContextTest {
 
     @Test
     void testGetRelatedFiles_NullParent() {
-        when(mockFile.getParent()).thenReturn(null);
+        lenient().when(mockFile.getParent()).thenReturn(null);
 
         assertThatCode(() -> context.getRelatedFiles(mockFile))
             .doesNotThrowAnyException();

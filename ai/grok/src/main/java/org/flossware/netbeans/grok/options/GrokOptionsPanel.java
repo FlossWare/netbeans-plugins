@@ -169,7 +169,7 @@ final class GrokOptionsPanel extends JPanel {
     }
 
     boolean valid() {
-        return apiKeyField.getPassword().length > 0;
+        return true;
     }
 
     private void testConnection() {
