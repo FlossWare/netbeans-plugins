@@ -63,7 +63,7 @@ public class ClaudeCompletionProvider implements CompletionProvider {
 
         // Trigger on specific characters
         String triggers = ClaudeCompletionSettings.getTriggerCharacters();
-        if (typedText != null && triggers.contains(typedText)) {
+        if (typedText != null && !typedText.isEmpty() && triggers.contains(typedText)) {
             return CompletionProvider.COMPLETION_QUERY_TYPE;
         }
 

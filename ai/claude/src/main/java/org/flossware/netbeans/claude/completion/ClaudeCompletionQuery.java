@@ -45,7 +45,8 @@ public class ClaudeCompletionQuery extends AsyncCompletionQuery {
             CompletionContext context = builder.build();
 
             // Check minimum characters
-            if (context.getPrefix().length() < ClaudeCompletionSettings.getMinimumCharacters()) {
+            String prefix = context.getPrefix();
+            if (prefix == null || prefix.length() < ClaudeCompletionSettings.getMinimumCharacters()) {
                 resultSet.finish();
                 return;
             }
@@ -92,7 +93,11 @@ public class ClaudeCompletionQuery extends AsyncCompletionQuery {
 
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
-            resultSet.finish();
+            try {
+                resultSet.finish();
+            } catch (Exception e) {
+                // Ignore exceptions from finish() itself
+            }
         }
     }
 

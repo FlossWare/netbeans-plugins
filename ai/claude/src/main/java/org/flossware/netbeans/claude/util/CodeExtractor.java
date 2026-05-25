@@ -75,6 +75,11 @@ public class CodeExtractor {
      */
     public static List<CodeBlock> extractCodeBlocks(String text) {
         List<CodeBlock> codeBlocks = new ArrayList<>();
+
+        if (text == null) {
+            return codeBlocks;
+        }
+
         Matcher matcher = CODE_BLOCK_PATTERN.matcher(text);
 
         while (matcher.find()) {
@@ -93,6 +98,9 @@ public class CodeExtractor {
      * Check if text contains any code blocks
      */
     public static boolean hasCodeBlocks(String text) {
+        if (text == null) {
+            return false;
+        }
         return CODE_BLOCK_PATTERN.matcher(text).find();
     }
 
@@ -108,6 +116,9 @@ public class CodeExtractor {
      * Remove code block markers and return just the code
      */
     public static String stripCodeBlockMarkers(String codeBlock) {
+        if (codeBlock == null) {
+            return null;
+        }
         Matcher matcher = CODE_BLOCK_PATTERN.matcher(codeBlock);
         if (matcher.find()) {
             return matcher.group(2);

@@ -72,7 +72,11 @@ public class ClaudeClient {
      */
     public void setApiKey(String apiKey) {
         Preferences prefs = NbPreferences.forModule(ClaudeClient.class);
-        prefs.put(PREF_API_KEY, apiKey);
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            prefs.remove(PREF_API_KEY);
+        } else {
+            prefs.put(PREF_API_KEY, apiKey.trim());
+        }
         initializeClient();
     }
 

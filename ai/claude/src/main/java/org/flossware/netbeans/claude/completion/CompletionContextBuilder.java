@@ -77,8 +77,20 @@ public class CompletionContextBuilder {
             // Determine context type (method, field, class, etc.)
             context.setContextType(determineContextType());
 
-        } catch (BadLocationException ex) {
-            // Handle gracefully
+        } catch (Exception ex) {
+            // Handle gracefully - set defaults for any missing fields
+            if (context.getPrefix() == null) {
+                context.setPrefix("");
+            }
+            if (context.getContextType() == null) {
+                context.setContextType("general");
+            }
+            if (context.getCurrentLine() == null) {
+                context.setCurrentLine("");
+            }
+            if (context.getSurroundingContext() == null) {
+                context.setSurroundingContext("");
+            }
         }
 
         return context;
@@ -87,10 +99,28 @@ public class CompletionContextBuilder {
     /**
      * Extract the current line being edited
      */
-    private String extractCurrentLine() throws BadLocationException {
-        int lineStart = javax.swing.text.Utilities.getRowStart(component, caretOffset);
-        int lineEnd = javax.swing.text.Utilities.getRowEnd(component, caretOffset);
-        return document.getText(lineStart, lineEnd - lineStart);
+    private String extractCurrentLine() {
+        try {
+            // Get all text up to caret
+            String textBefore = document.getText(0, caretOffset);
+            String textAfter = document.getText(caretOffset, document.getLength() - caretOffset);
+
+            // Find line start (last newline before caret, or start of document)
+            int lineStartOffset = textBefore.lastIndexOf('\n');
+            String lineBeforeCaret = lineStartOffset >= 0
+                    ? textBefore.substring(lineStartOffset + 1)
+                    : textBefore;
+
+            // Find line end (first newline after caret, or end of document)
+            int lineEndOffset = textAfter.indexOf('\n');
+            String lineAfterCaret = lineEndOffset >= 0
+                    ? textAfter.substring(0, lineEndOffset)
+                    : textAfter;
+
+            return lineBeforeCaret + lineAfterCaret;
+        } catch (BadLocationException ex) {
+            return "";
+        }
     }
 
     /**
@@ -137,33 +167,36 @@ public class CompletionContextBuilder {
      * Determine what type of completion context we're in
      */
     private String determineContextType() {
-        String prefix = extractPrefix();
-
-        if (prefix.contains(".")) {
-            return "method_call";
-        }
-
         try {
             String textBefore = document.getText(Math.max(0, caretOffset - 50),
                                                  Math.min(50, caretOffset));
 
-            if (textBefore.contains("new ")) {
-                return "constructor";
-            }
+            // Check keyword-based contexts first (more specific)
             if (textBefore.contains("import ")) {
                 return "import";
+            }
+            if (textBefore.contains("new ")) {
+                return "constructor";
             }
             if (textBefore.contains("extends ") || textBefore.contains("implements ")) {
                 return "type";
             }
 
-            // Check for method context
-            if (textBefore.contains("(")) {
+            // Check for parameter context (unclosed parenthesis)
+            int lastOpen = textBefore.lastIndexOf('(');
+            int lastClose = textBefore.lastIndexOf(')');
+            if (lastOpen > lastClose) {
                 return "parameter";
             }
 
-        } catch (BadLocationException ex) {
-            // Ignore
+            // Check prefix for method call (dot notation)
+            String prefix = extractPrefix();
+            if (prefix != null && prefix.contains(".")) {
+                return "method_call";
+            }
+
+        } catch (Exception ex) {
+            // Return default on any exception
         }
 
         return "general";

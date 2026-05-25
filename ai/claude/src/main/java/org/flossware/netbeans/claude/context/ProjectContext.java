@@ -55,7 +55,14 @@ public class ProjectContext {
      * Get project name
      */
     public String getProjectName() {
-        return ProjectUtils.getInformation(project).getDisplayName();
+        try {
+            return ProjectUtils.getInformation(project).getDisplayName();
+        } catch (Exception e) {
+            // Fallback when platform is not fully initialized
+            return project != null && project.getProjectDirectory() != null
+                    ? project.getProjectDirectory().getName()
+                    : "Unknown Project";
+        }
     }
 
     /**
@@ -71,16 +78,25 @@ public class ProjectContext {
     public String getProjectSummary() {
         StringBuilder summary = new StringBuilder();
         summary.append("Project: ").append(getProjectName()).append("\n");
-        summary.append("Location: ").append(getProjectDirectory().getPath()).append("\n\n");
 
-        // Get source groups
-        Sources sources = ProjectUtils.getSources(project);
-        SourceGroup[] sourceGroups = sources.getSourceGroups(Sources.TYPE_GENERIC);
+        FileObject projectDir = getProjectDirectory();
+        if (projectDir != null) {
+            summary.append("Location: ").append(projectDir.getPath()).append("\n\n");
+        }
 
-        summary.append("Source Structure:\n");
-        for (SourceGroup group : sourceGroups) {
-            summary.append("  - ").append(group.getDisplayName())
-                    .append(": ").append(group.getRootFolder().getPath()).append("\n");
+        try {
+            // Get source groups
+            Sources sources = ProjectUtils.getSources(project);
+            SourceGroup[] sourceGroups = sources.getSourceGroups(Sources.TYPE_GENERIC);
+
+            summary.append("Source Structure:\n");
+            for (SourceGroup group : sourceGroups) {
+                summary.append("  - ").append(group.getDisplayName())
+                        .append(": ").append(group.getRootFolder().getPath()).append("\n");
+            }
+        } catch (Exception e) {
+            // Platform not fully initialized, skip source groups
+            summary.append("Source Structure: N/A\n");
         }
 
         // List important files
@@ -183,6 +199,11 @@ public class ProjectContext {
      */
     public List<FileObject> getRelatedFiles(FileObject file) {
         List<FileObject> related = new ArrayList<>();
+
+        if (file == null || !file.isValid()) {
+            return related;
+        }
+
         String baseName = file.getName();
         String ext = file.getExt();
 
