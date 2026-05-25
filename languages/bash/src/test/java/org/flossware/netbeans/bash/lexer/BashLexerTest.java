@@ -161,4 +161,154 @@ class BashLexerTest {
 
         assertThat(ts.moveNext()).isFalse();
     }
+
+    @Test
+    void testSpecialVariables() throws Exception {
+        String text = "$@ $* $# $? $- $$ $!";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        while (ts.moveNext()) {
+            if (ts.token().id() != BashTokenId.WHITESPACE) {
+                assertThat(ts.token().id()).isEqualTo(BashTokenId.VARIABLE);
+            }
+        }
+    }
+
+    @Test
+    void testDollarSignAsOperator() throws Exception {
+        String text = "$ ";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        assertThat(ts.moveNext()).isTrue();
+        assertThat(ts.token().id()).isEqualTo(BashTokenId.OPERATOR);
+    }
+
+    @Test
+    void testEscapedStringDoubleQuotes() throws Exception {
+        String text = "\"hello\\\"world\"";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        assertThat(ts.moveNext()).isTrue();
+        assertThat(ts.token().id()).isEqualTo(BashTokenId.STRING);
+    }
+
+    @Test
+    void testBacktickCommandSubstitution() throws Exception {
+        String text = "`echo test`";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        assertThat(ts.moveNext()).isTrue();
+        assertThat(ts.token().id()).isEqualTo(BashTokenId.STRING);
+    }
+
+    @Test
+    void testEscapedBacktick() throws Exception {
+        String text = "`test\\`command`";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        assertThat(ts.moveNext()).isTrue();
+        assertThat(ts.token().id()).isEqualTo(BashTokenId.STRING);
+    }
+
+    @Test
+    void testIdentifierWithHyphen() throws Exception {
+        String text = "test-function";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        assertThat(ts.moveNext()).isTrue();
+        assertThat(ts.token().id()).isEqualTo(BashTokenId.IDENTIFIER);
+        assertThat(ts.token().text().toString()).isEqualTo("test-function");
+    }
+
+    @Test
+    void testSeparators() throws Exception {
+        String text = "( ) [ ] { } , ; . @";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        while (ts.moveNext()) {
+            if (ts.token().id() != BashTokenId.WHITESPACE) {
+                assertThat(ts.token().id()).isEqualTo(BashTokenId.SEPARATOR);
+            }
+        }
+    }
+
+    @Test
+    void testUnterminatedDoubleQuoteString() throws Exception {
+        String text = "\"unterminated";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        assertThat(ts.moveNext()).isTrue();
+        assertThat(ts.token().id()).isEqualTo(BashTokenId.STRING);
+    }
+
+    @Test
+    void testUnterminatedSingleQuoteString() throws Exception {
+        String text = "'unterminated";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        assertThat(ts.moveNext()).isTrue();
+        assertThat(ts.token().id()).isEqualTo(BashTokenId.STRING);
+    }
+
+    @Test
+    void testUnterminatedBacktick() throws Exception {
+        String text = "`unterminated";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        assertThat(ts.moveNext()).isTrue();
+        assertThat(ts.token().id()).isEqualTo(BashTokenId.STRING);
+    }
+
+    @Test
+    void testUnterminatedBraceVariable() throws Exception {
+        String text = "${VAR";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        assertThat(ts.moveNext()).isTrue();
+        assertThat(ts.token().id()).isEqualTo(BashTokenId.VARIABLE);
+    }
+
+    @Test
+    void testNumericVariable() throws Exception {
+        String text = "$1 $2 $9";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        while (ts.moveNext()) {
+            if (ts.token().id() != BashTokenId.WHITESPACE) {
+                assertThat(ts.token().id()).isEqualTo(BashTokenId.VARIABLE);
+            }
+        }
+    }
+
+    @Test
+    void testParenthesisVariable() throws Exception {
+        String text = "$(command)";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        assertThat(ts.moveNext()).isTrue();
+        assertThat(ts.token().id()).isEqualTo(BashTokenId.VARIABLE);
+    }
+
+    @Test
+    void testErrorToken() throws Exception {
+        String text = "";
+        TokenHierarchy<?> hi = TokenHierarchy.create(text, BashTokenId.language());
+        TokenSequence<BashTokenId> ts = hi.tokenSequence(BashTokenId.language());
+
+        assertThat(ts.moveNext()).isTrue();
+        assertThat(ts.token().id()).isEqualTo(BashTokenId.ERROR);
+    }
 }

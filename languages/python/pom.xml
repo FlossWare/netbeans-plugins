@@ -213,17 +213,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Skip JaCoCo coverage check for language modules (will be enabled once tests are added) -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>jacoco-check</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 </project>

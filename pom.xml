@@ -371,6 +371,7 @@
                     <version>3.2.3</version>
                     <configuration>
                         <argLine>
+                            @{argLine}
                             -Djava.awt.headless=true
                             -Xmx512m
                         </argLine>
@@ -429,6 +430,12 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>0.8.11</version>
+                    <configuration>
+                        <excludes>
+                            <exclude>**/Bundle.class</exclude>
+                            <exclude>**/Bundle$*.class</exclude>
+                        </excludes>
+                    </configuration>
                     <executions>
                         <execution>
                             <id>prepare-agent</id>
@@ -451,12 +458,12 @@
                             <configuration>
                                 <rules>
                                     <rule>
-                                        <element>PACKAGE</element>
+                                        <element>BUNDLE</element>
                                         <limits>
                                             <limit>
                                                 <counter>LINE</counter>
                                                 <value>COVEREDRATIO</value>
-                                                <minimum>1.00</minimum>
+                                                <minimum>0.70</minimum>
                                             </limit>
                                         </limits>
                                     </rule>

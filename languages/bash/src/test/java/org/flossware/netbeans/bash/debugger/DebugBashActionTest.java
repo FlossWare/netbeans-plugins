@@ -33,13 +33,13 @@ class DebugBashActionTest {
         assertThat(action).isNotNull();
     }
 
-    // Note: These tests are commented out because they require bashdb to be installed on the system
-    // They should be run as integration tests with appropriate environment setup
+    // Note: actionPerformed tests are commented out because they require complex NetBeans FileObject mocking
+    // and would require bashdb to be installed. These should be integration tests.
     /*
     @Test
     void testActionPerformed_WithValidFile() {
         when(mockDataObject.getPrimaryFile()).thenReturn(mockFileObject);
-        when(mockFileObject.getPath()).thenReturn("/test/script.txt");
+        when(mockFileObject.getPath()).thenReturn("/test/script.sh");
 
         assertThatCode(() -> action.actionPerformed(null)).doesNotThrowAnyException();
     }
