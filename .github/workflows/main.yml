@@ -56,7 +56,7 @@ jobs:
         run: "mvn -U build-helper:parse-version versions:set -DnewVersion=\\${parsedVersion.majorVersion}.\\${parsedVersion.nextMinorVersion} versions:commit"
 
       - name: Building and Testing
-        run: "mvn -U clean install -Dmaven.test.skip=true"
+        run: "mvn -U clean install"
 
       - name: Verify build success
         run: |

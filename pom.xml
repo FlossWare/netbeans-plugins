@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.flossware.netbeans</groupId>
-    <artifactId>netbeans-plugins</artifactId>
+    <artifactId>plugins</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
 
@@ -447,7 +447,7 @@
                                             <limit>
                                                 <counter>LINE</counter>
                                                 <value>COVEREDRATIO</value>
-                                                <minimum>0.60</minimum>
+                                                <minimum>1.00</minimum>
                                             </limit>
                                         </limits>
                                     </rule>
