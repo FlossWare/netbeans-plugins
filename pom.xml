@@ -18,6 +18,11 @@
         <module>ai/gemini</module>
         <module>ai/chatgpt</module>
         <module>ai/grok</module>
+        <module>ai/mistral</module>
+        <module>ai/perplexity</module>
+        <module>ai/cohere</module>
+        <module>ai/deepseek</module>
+        <module>ai/openrouter</module>
 
         <!-- Language Support Plugins -->
         <module>languages/common</module>
