@@ -34,6 +34,11 @@ A comprehensive NetBeans IDE plugin that integrates Anthropic's Claude AI assist
   - Complete javadoc with @param, @return, @throws
   - Inserts directly into editor
   - Context-aware descriptions
+- **🐛 Debug Assistance**: AI-powered error analysis
+  - Parse stack traces automatically
+  - Multiple fix suggestions with confidence levels
+  - Root cause explanations
+  - Prevention tips
 
 ## Prerequisites
 
@@ -106,6 +111,7 @@ Select code in the editor, right-click, and choose:
 3. **Suggest Refactoring (Claude)** - Get improvement suggestions
 4. **Generate Test (Claude)** - Auto-generate comprehensive JUnit 5 tests
 5. **Generate Javadoc (Claude)** - Create documentation for methods
+6. **Analyze Error (Claude)** - Get fix suggestions for errors and stack traces
 
 ### Code Insertion
 

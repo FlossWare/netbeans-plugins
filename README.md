@@ -55,6 +55,7 @@ All plugins can be installed simultaneously without conflicts.
 ⚙️ **Configuration Panel** - Full control over API settings and behavior  
 🧪 **Test Generation** - AI-powered test generation (JUnit 5 + Mockito + AssertJ)  
 📚 **Javadoc Generation** - Auto-generate comprehensive documentation  
+🐛 **Debug Assistance** - AI-powered error analysis and fix suggestions  
 
 ## Quick Start
 
@@ -300,8 +301,8 @@ Right-click on selected code:
 - **Java Classes per plugin**: ~40
 - **Lines of Code per plugin**: ~5,000
 - **Packages per plugin**: 9
-- **Features per plugin**: 8 (Claude has Test Generation & Javadoc Generation)
-- **Test Coverage (Claude)**: **68%** (501 tests)
+- **Features per plugin**: 9 (Claude has Test Generation, Javadoc Generation & Debug Assistance)
+- **Test Coverage (Claude)**: **65%+** (531 tests)
 
 ### Language Plugins
 - **Total Modules**: 14
@@ -313,9 +314,9 @@ Right-click on selected code:
 
 ### Total Project
 - **Total Modules**: 23 (9 AI + 14 Language)
-- **Total Test Files**: 120
-- **Total Tests**: 501+ (Claude module)
-- **Overall Test Coverage**: 68% (Claude module with advanced features)
+- **Total Test Files**: 123
+- **Total Tests**: 531+ (Claude module)
+- **Overall Test Coverage**: 65%+ (Claude module with advanced features)
 - **Build Time**: ~3 minutes (with tests)
 - **Can Install Together**: ✅ Yes, all plugins
 - **Conflicts**: ❌ None
