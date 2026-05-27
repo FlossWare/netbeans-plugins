@@ -108,7 +108,7 @@ final class MistralOptionsPanel extends JPanel {
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         modelComboBox = new JComboBox<>(new String[]{
-            "mistral-large-latest",
+            "mistral-small-latest",
             "mistral-medium-latest",
             "mistral-small-latest",
             "codestral-latest"
@@ -154,7 +154,7 @@ final class MistralOptionsPanel extends JPanel {
     void load() {
         Preferences prefs = NbPreferences.forModule(MistralOptionsPanel.class);
         apiKeyField.setText(prefs.get(PREF_API_KEY, ""));
-        modelComboBox.setSelectedItem(prefs.get(PREF_MODEL, "mistral-large-latest"));
+        modelComboBox.setSelectedItem(prefs.get(PREF_MODEL, "mistral-small-latest"));
         maxTokensSpinner.setValue(prefs.getInt(PREF_MAX_TOKENS, 4096));
         temperatureSpinner.setValue(prefs.getDouble(PREF_TEMPERATURE, 0.7));
     }

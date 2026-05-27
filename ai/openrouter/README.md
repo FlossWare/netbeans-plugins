@@ -1,55 +1,117 @@
-# NetBeans OpenRouter Integration
+# OpenRouter Integration for NetBeans
 
-OpenRouter AI integration for Apache NetBeans IDE.
-
-## Overview
-
-This module integrates OpenRouter AI into NetBeans, providing access to multiple AI models including:
-- Anthropic Claude (Claude 3.5 Sonnet, Claude 3 Opus, Claude 3 Haiku)
-- OpenAI GPT-4 and GPT-3.5
-- Google Gemini Pro
-- Meta Llama 3
-- Mistral AI models
-- And many more
+Unified access to 100+ AI models through a single API - including many FREE models!
 
 ## Features
 
-- Chat interface for AI assistance
-- Code explanation and analysis
-- Context-aware queries with project information
-- Right-click "Ask OpenRouter" action on selected code
-- Configurable model selection
-- Streaming responses for real-time interaction
+- 💬 Interactive chat window  
+- 🎯 Choose from 100+ AI models (free & paid)
+- 🔄 Switch models without changing API keys
+- 💰 **Many FREE models available**
+- 📊 Cost tracking and analytics
+- ⚙️ Flexible model selection
 
-## Configuration
+## Free Models Available ✅
 
-1. Get an API key from [OpenRouter](https://openrouter.ai/keys)
-2. In NetBeans, go to Tools > Options > Advanced > OpenRouter AI
-3. Enter your API key
-4. Select your preferred model
-5. (Optional) Adjust max tokens and temperature settings
+**OpenRouter provides access to MANY FREE models!**
+- **Default model**: `meta-llama/llama-3-8b-instruct` (FREE)
+- **Get API key**: https://openrouter.ai/keys
+- **Free credits**: $1 free credit for new users
+- **Free models**: Access to open-source models at no cost
 
-## Usage
+### Popular Free Models:
+- `meta-llama/llama-3-8b-instruct` - **FREE** (default, fast)
+- `meta-llama/llama-3-70b-instruct` - **FREE** (more capable)
+- `google/gemma-7b-it` - **FREE**
+- `mistralai/mistral-7b-instruct` - **FREE**
+- `openchat/openchat-7b` - **FREE**
+- `nousresearch/hermes-3-llama-3.1-405b` - **FREE** (very large)
 
-### Chat Window
+### Paid Models (also accessible):
+- `anthropic/claude-3.5-sonnet` - Claude (paid)
+- `openai/gpt-4-turbo` - GPT-4 (paid)
+- `google/gemini-pro` - Gemini (paid)
+- 100+ more models...
 
-Open the OpenRouter chat window from:
-- Menu: Window > OpenRouter
-- Tools menu: Tools > Open OpenRouter Chat
+💡 **One API key for ALL models** - switch between free and paid as needed!
 
-### Code Actions
+## Setup
 
-Right-click on selected code in the editor and choose "Ask OpenRouter" to get AI assistance about the selected code.
+1. **Get API Key**:
+   - Visit https://openrouter.ai/keys
+   - Create account (free)
+   - Generate API key ($1 free credit included)
+   - **Many models are FREE forever!**
 
-## API Endpoint
+2. **Configure in NetBeans**:
+   - Tools → Options → Advanced → OpenRouter
+   - Enter your API key
+   - Click "Test Connection"  
+   - **Choose a FREE model** from dropdown (default is free!)
 
-This plugin uses the OpenRouter API endpoint:
-- URL: https://openrouter.ai/api/v1/chat/completions
-- Authentication: Bearer token in Authorization header
+3. **Usage**:
+   - Right-click code → "Ask OpenRouter"
+   - Window → OpenRouter (open chat)
+   - Switch models anytime in settings
 
-## Default Model
+## Best Use Cases
 
-The default model is `anthropic/claude-3.5-sonnet`, but you can change this in the settings to any model supported by OpenRouter.
+- 🎯 **Model comparison** - Try different models for same task
+- 💰 **Cost optimization** - Start with free models, upgrade if needed
+- 🔍 **Specialized tasks** - Pick the best model per task
+- 🌐 **One-stop shop** - Access Claude, GPT-4, Llama, Gemini, Mistral all in one place
+
+## Available Models
+
+OpenRouter provides access to 100+ models from:
+- **Anthropic** (Claude family)
+- **OpenAI** (GPT-4, GPT-3.5)
+- **Google** (Gemini, Gemma)
+- **Meta** (Llama 3)
+- **Mistral AI** (Mistral, Mixtral)
+- **And many more!**
+
+**Browse all models**: https://openrouter.ai/models
+
+## Requirements
+
+- NetBeans 22.0+
+- Java 11+
+- OpenRouter API key (free with $1 credit)
+
+## Pricing
+
+- **Free models**: Many models available at $0 cost
+- **Paid models**: Pay-as-you-go pricing
+- **Free credits**: $1 credit for new users  
+- **Model pricing**: https://openrouter.ai/models
+
+💡 **Tip**: Filter by "Free" on OpenRouter website to see all free options!
+
+## Privacy
+
+- Requests routed through OpenRouter
+- Data sent to selected model provider
+- Privacy varies by chosen model
+- Review OpenRouter privacy: https://openrouter.ai/privacy
+
+## Support
+
+- OpenRouter Docs: https://openrouter.ai/docs
+- API Reference: https://openrouter.ai/docs/api-reference
+- Discord: https://discord.gg/fVyRaUDgxW
+- Models list: https://openrouter.ai/models
+
+## Why Choose OpenRouter?
+
+✅ **100+ models** - Largest selection  
+✅ **Free options** - Many models at $0 cost  
+✅ **One API** - No need for multiple API keys  
+✅ **Easy switching** - Try different models instantly  
+✅ **Cost tracking** - Monitor usage and costs  
+✅ **Fallbacks** - Automatic fallback if model is down
+
+**Perfect for**: Developers who want flexibility to use the best model for each task!
 
 ## License
 

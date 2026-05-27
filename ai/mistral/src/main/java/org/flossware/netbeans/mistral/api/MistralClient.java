@@ -63,7 +63,7 @@ public class MistralClient {
     private void loadSettings() {
         Preferences prefs = NbPreferences.forModule(MistralClient.class);
         this.apiKey = prefs.get(PREF_API_KEY, "");
-        this.model = prefs.get(PREF_MODEL, "mistral-large-latest");
+        this.model = prefs.get(PREF_MODEL, "mistral-small-latest");
         this.maxTokens = prefs.getInt(PREF_MAX_TOKENS, 4096);
         this.temperature = prefs.getDouble(PREF_TEMPERATURE, 0.7);
 
