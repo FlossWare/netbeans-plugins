@@ -26,6 +26,14 @@ A comprehensive NetBeans IDE plugin that integrates Anthropic's Claude AI assist
 - **💬 Conversation History**: Maintains context across multiple messages
 - **🎯 Multiple Model Support**: Choose from Sonnet, Opus, or Haiku
 - **🔧 Configurable Settings**: Temperature, max tokens, completion settings, and more
+- **🧪 Test Generation**: AI-powered test generation from selected code
+  - Generates JUnit 5 tests with Mockito and AssertJ
+  - Comprehensive coverage with edge cases
+  - Automatic test file creation
+- **📚 Javadoc Generation**: Auto-generate documentation from methods
+  - Complete javadoc with @param, @return, @throws
+  - Inserts directly into editor
+  - Context-aware descriptions
 
 ## Prerequisites
 
@@ -96,6 +104,8 @@ Select code in the editor, right-click, and choose:
 1. **Ask Claude About This Code** - General questions about selected code
 2. **Explain This Code (Claude)** - Detailed explanation of functionality
 3. **Suggest Refactoring (Claude)** - Get improvement suggestions
+4. **Generate Test (Claude)** - Auto-generate comprehensive JUnit 5 tests
+5. **Generate Javadoc (Claude)** - Create documentation for methods
 
 ### Code Insertion
 
