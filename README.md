@@ -5,11 +5,20 @@ Multi-module Maven project providing comprehensive NetBeans IDE plugins for **AI
 ## Overview
 
 ### AI Assistant Plugins
-Four complete NetBeans plugins with identical features, each integrating a different AI provider:
-- **Claude** - Anthropic's Claude AI (95% test coverage)
-- **Gemini** - Google's Gemini AI
-- **ChatGPT** - OpenAI's ChatGPT
-- **Grok** - xAI's Grok AI
+Nine complete NetBeans plugins integrating popular AI providers (6 with FREE tiers!):
+
+**FREE Tier Available ✅**
+- **Claude** - Anthropic's Claude AI (95% test coverage, free credits)
+- **Gemini** - Google's Gemini AI (free tier)
+- **Mistral** - Mistral AI (generous free tier)
+- **Cohere** - Enterprise AI (1,000 free calls/month)
+- **DeepSeek** - 🌟 COMPLETELY FREE unlimited!
+- **OpenRouter** - Access to 100+ models (many free)
+
+**Paid/Limited 💰**
+- **ChatGPT** - OpenAI's GPT ($5 trial credits)
+- **Perplexity** - Search-focused AI (5 requests/day free)
+- **Grok** - xAI's Grok (requires X Premium)
 
 ### Language Support Plugins
 Comprehensive language plugins for multi-language development:
@@ -53,29 +62,34 @@ All plugins can be installed simultaneously without conflicts.
 mvn clean package
 ```
 
-This builds all plugins in one command (18 total):
+This builds all plugins in one command (23 total):
 
-**AI Plugins:**
-- `ai/claude/target/netbeans-claude-integration-1.0.0-SNAPSHOT.nbm`
-- `ai/gemini/target/netbeans-gemini-integration-1.0.0-SNAPSHOT.nbm`
-- `ai/chatgpt/target/netbeans-chatgpt-integration-1.0.0-SNAPSHOT.nbm`
-- `ai/grok/target/netbeans-grok-integration-1.0.0-SNAPSHOT.nbm`
+**AI Plugins (9 modules):**
+- `ai/claude/target/netbeans-claude-integration-1.0.nbm`
+- `ai/gemini/target/netbeans-gemini-integration-1.0.nbm`
+- `ai/chatgpt/target/netbeans-chatgpt-integration-1.0.nbm`
+- `ai/grok/target/netbeans-grok-integration-1.0.nbm`
+- `ai/mistral/target/netbeans-mistral-integration-1.0.nbm` ✨ NEW
+- `ai/perplexity/target/netbeans-perplexity-integration-1.0.nbm` ✨ NEW
+- `ai/cohere/target/netbeans-cohere-integration-1.0.nbm` ✨ NEW
+- `ai/deepseek/target/netbeans-deepseek-integration-1.0.nbm` ✨ NEW
+- `ai/openrouter/target/netbeans-openrouter-integration-1.0.nbm` ✨ NEW
 
-**Language Plugins:**
-- `languages/common/target/netbeans-common-1.0.0-SNAPSHOT.nbm`
-- `languages/python/target/netbeans-python-1.0.0-SNAPSHOT.nbm`
-- `languages/groovy/target/netbeans-groovy-1.0.0-SNAPSHOT.nbm`
-- `languages/beanshell/target/netbeans-beanshell-1.0.0-SNAPSHOT.nbm`
-- `languages/mvel/target/netbeans-mvel-1.0.0-SNAPSHOT.nbm`
-- `languages/bash/target/netbeans-bash-1.0.0-SNAPSHOT.nbm`
-- `languages/zsh/target/netbeans-zsh-1.0.0-SNAPSHOT.nbm`
-- `languages/powershell/target/netbeans-powershell-1.0.0-SNAPSHOT.nbm`
-- `languages/batch/target/netbeans-batch-1.0.0-SNAPSHOT.nbm`
-- `languages/erlang/target/netbeans-erlang-1.0.0-SNAPSHOT.nbm`
-- `languages/ruby/target/netbeans-ruby-1.0.0-SNAPSHOT.nbm`
-- `languages/kotlin/target/netbeans-kotlin-1.0.0-SNAPSHOT.nbm`
-- `languages/prolog/target/netbeans-prolog-1.0.0-SNAPSHOT.nbm`
-- `languages/lisp/target/netbeans-lisp-1.0.0-SNAPSHOT.nbm`
+**Language Plugins (14 modules):**
+- `languages/common/target/netbeans-common-1.0.nbm`
+- `languages/python/target/netbeans-python-1.0.nbm`
+- `languages/groovy/target/netbeans-groovy-1.0.nbm`
+- `languages/beanshell/target/netbeans-beanshell-1.0.nbm`
+- `languages/mvel/target/netbeans-mvel-1.0.nbm`
+- `languages/bash/target/netbeans-bash-support-1.0.nbm`
+- `languages/zsh/target/netbeans-zsh-support-1.0.nbm`
+- `languages/powershell/target/netbeans-powershell-support-1.0.nbm`
+- `languages/batch/target/netbeans-batch-support-1.0.nbm`
+- `languages/erlang/target/netbeans-erlang-support-1.0.nbm`
+- `languages/ruby/target/netbeans-ruby-support-1.0.nbm`
+- `languages/kotlin/target/netbeans-kotlin-support-1.0.nbm`
+- `languages/prolog/target/netbeans-prolog-support-1.0.nbm`
+- `languages/lisp/target/netbeans-lisp-support-1.0.nbm`
 
 ### Build Individual Plugin
 
@@ -85,6 +99,11 @@ mvn clean package -pl ai/claude
 mvn clean package -pl ai/gemini
 mvn clean package -pl ai/chatgpt
 mvn clean package -pl ai/grok
+mvn clean package -pl ai/mistral
+mvn clean package -pl ai/perplexity
+mvn clean package -pl ai/cohere
+mvn clean package -pl ai/deepseek
+mvn clean package -pl ai/openrouter
 
 # Language Support - Core
 mvn clean package -pl languages/common
@@ -107,7 +126,7 @@ mvn clean package -pl languages/prolog
 mvn clean package -pl languages/lisp
 
 # Build all AI plugins only
-mvn clean package -pl ai/claude,ai/gemini,ai/chatgpt,ai/grok
+mvn clean package -pl ai/claude,ai/gemini,ai/chatgpt,ai/grok,ai/mistral,ai/perplexity,ai/cohere,ai/deepseek,ai/openrouter
 
 # Build all language plugins only
 mvn clean package -pl languages/common,languages/python,languages/groovy,languages/beanshell,languages/mvel,languages/bash,languages/zsh,languages/powershell,languages/batch,languages/erlang,languages/ruby,languages/kotlin,languages/prolog,languages/lisp
@@ -173,6 +192,12 @@ netbeans-plugins/
   - Claude: https://console.anthropic.com/
   - Gemini: https://makersuite.google.com/app/apikey
   - ChatGPT: https://console.openai.com/
+  - Grok: https://console.x.ai/
+  - Mistral: https://console.mistral.ai/
+  - Perplexity: https://www.perplexity.ai/settings/api
+  - Cohere: https://dashboard.cohere.com/
+  - DeepSeek: https://platform.deepseek.com/
+  - OpenRouter: https://openrouter.ai/keys
 
 ## Technology Stack
 
@@ -211,6 +236,11 @@ netbeans-plugins/
 - **[ai/gemini/README.md](ai/gemini/README.md)** - Gemini plugin documentation
 - **[ai/chatgpt/README.md](ai/chatgpt/README.md)** - ChatGPT plugin documentation
 - **[ai/grok/README.md](ai/grok/README.md)** - Grok plugin documentation
+- **[ai/mistral/README.md](ai/mistral/README.md)** - Mistral plugin documentation
+- **[ai/perplexity/README.md](ai/perplexity/README.md)** - Perplexity plugin documentation
+- **[ai/cohere/README.md](ai/cohere/README.md)** - Cohere plugin documentation
+- **[ai/deepseek/README.md](ai/deepseek/README.md)** - DeepSeek plugin documentation
+- **[ai/openrouter/README.md](ai/openrouter/README.md)** - OpenRouter plugin documentation
 
 ### Language Plugins
 - **[languages/common/README.md](languages/common/README.md)** - Shared language support utilities
@@ -226,6 +256,11 @@ Each plugin has its own settings panel:
 - **Tools → Options → Advanced Options → Gemini AI**
 - **Tools → Options → Advanced Options → ChatGPT AI**
 - **Tools → Options → Advanced Options → Grok AI**
+- **Tools → Options → Advanced Options → Mistral AI**
+- **Tools → Options → Advanced Options → Perplexity AI**
+- **Tools → Options → Advanced Options → Cohere AI**
+- **Tools → Options → Advanced Options → DeepSeek AI**
+- **Tools → Options → Advanced Options → OpenRouter**
 
 Configure:
 - API key (stored securely)
@@ -257,7 +292,7 @@ Right-click on selected code:
 ## Statistics
 
 ### AI Plugins
-- **Modules**: 4 (Claude, Gemini, ChatGPT, Grok)
+- **Modules**: 9 (Claude, Gemini, ChatGPT, Grok, Mistral, Perplexity, Cohere, DeepSeek, OpenRouter)
 - **Java Classes per plugin**: ~23
 - **Lines of Code per plugin**: ~4,000
 - **Packages per plugin**: 7
@@ -273,7 +308,7 @@ Right-click on selected code:
 - **Test Coverage**: Basic infrastructure tests
 
 ### Total Project
-- **Total Modules**: 18 (4 AI + 14 Language)
+- **Total Modules**: 23 (9 AI + 14 Language)
 - **Total Test Files**: 114
 - **Total Tests**: 454+
 - **Overall Test Coverage**: 95% (Claude module)
