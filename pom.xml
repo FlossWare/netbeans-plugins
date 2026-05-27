@@ -13,6 +13,9 @@
     <description>Comprehensive NetBeans IDE plugins for AI integration and multi-language development support</description>
 
     <modules>
+        <!-- AI Core Framework -->
+        <module>ai/core</module>
+
         <!-- AI Assistant Plugins -->
         <module>ai/claude</module>
         <module>ai/gemini</module>
