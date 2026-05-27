@@ -17,115 +17,107 @@
 
 package org.flossware.netbeans.python.debugger;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import org.flossware.netbeans.common.debugger.AbstractDebuggerSession;
 import org.flossware.netbeans.python.settings.PythonSettings;
-import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 
 /**
- * Manages Python debugging sessions using debugpy (Debug Adapter Protocol)
+ * Manages Python debugging sessions using debugpy (Debug Adapter Protocol).
+ *
+ * <p>This class extends {@link AbstractDebuggerSession} which provides proper
+ * resource management including:</p>
+ * <ul>
+ *   <li>Process lifecycle management</li>
+ *   <li>Thread pool for background tasks</li>
+ *   <li>Proper I/O stream cleanup</li>
+ *   <li>Shutdown hooks</li>
+ * </ul>
+ *
+ * <p><b>Prerequisites:</b></p>
+ * <pre>
+ * pip install debugpy
+ * </pre>
+ *
+ * @author FlossWare
+ * @version 2.0
+ * @since 1.0
  */
-public class PythonDebuggerSession {
+public class PythonDebuggerSession extends AbstractDebuggerSession {
 
-    private final File scriptFile;
-    private Process debugProcess;
     private static final int DEBUG_PORT = 5678;
 
+    /**
+     * Create a new Python debugger session.
+     *
+     * @param scriptFile The Python script to debug
+     */
     public PythonDebuggerSession(File scriptFile) {
-        this.scriptFile = scriptFile;
+        super(scriptFile, "Python Debugger");
     }
 
     /**
-     * Start debug session
+     * Create the ProcessBuilder for debugpy.
+     *
+     * @return ProcessBuilder configured for Python debugging
+     * @throws IOException If process configuration fails
      */
-    public void start() {
-        try {
-            String pythonPath = PythonSettings.getInstance().getPythonPath();
-            if (pythonPath == null || pythonPath.isEmpty()) {
-                pythonPath = "python3";
-            }
-
-            List<String> command = new ArrayList<>();
-            command.add(pythonPath);
-            command.add("-m");
-            command.add("debugpy");
-            command.add("--listen");
-            command.add("0.0.0.0:" + DEBUG_PORT);
-            command.add("--wait-for-client");
-            command.add(scriptFile.getAbsolutePath());
-
-            ProcessBuilder pb = new ProcessBuilder(command);
-            pb.directory(scriptFile.getParentFile());
-            pb.redirectErrorStream(true);
-
-            InputOutput io = IOProvider.getDefault().getIO("Python Debugger: " + scriptFile.getName(), false);
-            io.select();
-
-            io.getOut().println("Starting Python debugger...");
-            io.getOut().println("Command: " + String.join(" ", command));
-            io.getOut().println("Debug port: " + DEBUG_PORT);
-            io.getOut().println();
-            io.getOut().println("NOTE: debugpy must be installed:");
-            io.getOut().println("  pip install debugpy");
-            io.getOut().println();
-            io.getOut().println("To attach debugger:");
-            io.getOut().println("1. Install a DAP (Debug Adapter Protocol) client");
-            io.getOut().println("2. Connect to localhost:" + DEBUG_PORT);
-            io.getOut().println();
-            io.getOut().println("Alternative: Use Python debugger in your IDE");
-            io.getOut().println("  Host: localhost");
-            io.getOut().println("  Port: " + DEBUG_PORT);
-            io.getOut().println();
-            io.getOut().println("Waiting for debugger to attach on port " + DEBUG_PORT + "...");
-            io.getOut().println();
-
-            debugProcess = pb.start();
-
-            // Stream output
-            new Thread(() -> {
-                try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(debugProcess.getInputStream()))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        io.getOut().println(line);
-                    }
-                } catch (IOException e) {
-                    io.getErr().println("Error reading process output: " + e.getMessage());
-                }
-            }).start();
-
-            // Wait for process
-            new Thread(() -> {
-                try {
-                    int exitCode = debugProcess.waitFor();
-                    io.getOut().println();
-                    io.getOut().println("Debug session ended with exit code: " + exitCode);
-                } catch (InterruptedException e) {
-                    io.getErr().println("Debug session interrupted");
-                }
-            }).start();
-
-        } catch (IOException e) {
-            InputOutput io = IOProvider.getDefault().getIO("Python Debugger Error", false);
-            io.select();
-            io.getErr().println("Failed to start debugger: " + e.getMessage());
-            io.getErr().println();
-            io.getErr().println("Make sure debugpy is installed:");
-            io.getErr().println("  pip install debugpy");
+    @Override
+    protected ProcessBuilder createProcessBuilder() throws IOException {
+        String pythonPath = PythonSettings.getInstance().getPythonPath();
+        if (pythonPath == null || pythonPath.isEmpty()) {
+            pythonPath = "python3";
         }
+
+        List<String> command = new ArrayList<>();
+        command.add(pythonPath);
+        command.add("-m");
+        command.add("debugpy");
+        command.add("--listen");
+        command.add("0.0.0.0:" + DEBUG_PORT);
+        command.add("--wait-for-client");
+        command.add(getScriptFile().getAbsolutePath());
+
+        ProcessBuilder pb = new ProcessBuilder(command);
+        pb.directory(getScriptFile().getParentFile());
+        pb.redirectErrorStream(true);
+
+        return pb;
     }
 
     /**
-     * Stop debug session
+     * Print Python-specific debugger instructions.
+     *
+     * @param io The I/O window
      */
-    public void stop() {
-        if (debugProcess != null && debugProcess.isAlive()) {
-            debugProcess.destroy();
-        }
+    @Override
+    protected void printStartupInstructions(InputOutput io) {
+        io.getOut().println("Debug port: " + DEBUG_PORT);
+        io.getOut().println();
+        io.getOut().println("To attach debugger:");
+        io.getOut().println("1. Install a DAP (Debug Adapter Protocol) client");
+        io.getOut().println("2. Connect to localhost:" + DEBUG_PORT);
+        io.getOut().println();
+        io.getOut().println("Alternative: Use Python debugger in your IDE");
+        io.getOut().println("  Host: localhost");
+        io.getOut().println("  Port: " + DEBUG_PORT);
+        io.getOut().println();
+        io.getOut().println("Waiting for debugger to attach on port " + DEBUG_PORT + "...");
+    }
+
+    /**
+     * Handle debugpy startup errors.
+     *
+     * @param io The I/O window
+     * @param e The exception
+     */
+    @Override
+    protected void handleStartupError(InputOutput io, IOException e) {
+        io.getErr().println();
+        io.getErr().println("Make sure debugpy is installed:");
+        io.getErr().println("  pip install debugpy");
     }
 }
