@@ -277,6 +277,7 @@
                         <moduleType>normal</moduleType>
                         <licenseName>GNU General Public License v3.0</licenseName>
                         <licenseFile>LICENSE</licenseFile>
+                        <nbmBuildDir>${project.build.directory}</nbmBuildDir>
                     </configuration>
                 </plugin>
 
@@ -298,6 +299,7 @@
                         <archive>
                             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                         </archive>
+                        <outputDirectory>${project.build.directory}</outputDirectory>
                     </configuration>
                 </plugin>
 
