@@ -4,24 +4,26 @@ Multi-module Maven project providing comprehensive NetBeans IDE plugins for **AI
 
 ## Overview
 
+⚠️ **Maturity Notice:** The Claude plugin is production-ready with 65% test coverage and 531 tests. Other AI plugins are functional but experimental (<10% coverage each). Language plugins are early-stage implementations.
+
 ### AI Assistant Plugins
-Nine complete NetBeans plugins integrating popular AI providers (6 with FREE tiers!):
+Nine NetBeans plugins integrating popular AI providers (6 with FREE tiers!):
 
 **FREE Tier Available ✅**
-- **Claude** - Anthropic's Claude AI (95% test coverage, free credits)
-- **Gemini** - Google's Gemini AI (free tier)
-- **Mistral** - Mistral AI (generous free tier)
-- **Cohere** - Enterprise AI (1,000 free calls/month)
-- **DeepSeek** - 🌟 COMPLETELY FREE unlimited!
-- **OpenRouter** - Access to 100+ models (many free)
+- **Claude** - Anthropic's Claude AI (✅ **Production-Ready: 65% coverage, 531 tests**)
+- **Gemini** - Google's Gemini AI (⚠️ Experimental: <10% coverage)
+- **Mistral** - Mistral AI (⚠️ Experimental: <10% coverage)
+- **Cohere** - Enterprise AI (⚠️ Experimental: <10% coverage)
+- **DeepSeek** - 🌟 Completely FREE (⚠️ Experimental: <10% coverage)
+- **OpenRouter** - Access to 100+ models (⚠️ Experimental: <10% coverage)
 
 **Paid/Limited 💰**
-- **ChatGPT** - OpenAI's GPT ($5 trial credits)
-- **Perplexity** - Search-focused AI (5 requests/day free)
-- **Grok** - xAI's Grok (requires X Premium)
+- **ChatGPT** - OpenAI's GPT (⚠️ Experimental: <10% coverage)
+- **Perplexity** - Search-focused AI (⚠️ Experimental: <10% coverage)
+- **Grok** - xAI's Grok (⚠️ Experimental: <10% coverage)
 
-### Language Support Plugins
-Comprehensive language plugins for multi-language development:
+### Language Support Plugins  
+⚠️ **Early Stage:** Language plugins provide basic syntax highlighting and structure. LSP integration is experimental and not fully tested.
 
 **Core:**
 - **Common** - Shared abstractions and utilities for language plugins
@@ -297,12 +299,11 @@ Right-click on selected code:
 ## Statistics
 
 ### AI Plugins
-- **Modules**: 9 (Claude, Gemini, ChatGPT, Grok, Mistral, Perplexity, Cohere, DeepSeek, OpenRouter)
-- **Java Classes per plugin**: ~40
-- **Lines of Code per plugin**: ~5,000
-- **Packages per plugin**: 9
-- **Features per plugin**: 9 (Claude has Test Generation, Javadoc Generation & Debug Assistance)
-- **Test Coverage (Claude)**: **65%+** (531 tests)
+- **Modules**: 9 total (1 production-ready, 8 experimental)
+- **Claude (Production)**: 40 classes, ~5,000 LOC, 65% coverage, 531 tests
+- **Others (Experimental)**: 23 classes each, ~4,000 LOC each, <10% coverage
+- **Note:** ⚠️ Significant code duplication across modules (see CRITICAL_ASSESSMENT.md)
+- **Recommendation:** Use Claude plugin for production; others for experimentation only
 
 ### Language Plugins
 - **Total Modules**: 14
@@ -332,20 +333,31 @@ Right-click on selected code:
 
 ## Testing
 
-### Test Coverage: 95% 🎯
+### Test Coverage Status ⚠️
 
-The project features comprehensive test coverage with **454 tests** across all modules.
+**IMPORTANT:** Test coverage varies significantly across modules. Only the Claude module has comprehensive test coverage.
 
-**Claude Module Coverage:**
-- **Overall**: 68% line coverage (with new advanced features)
+**Claude Module (Production-Ready):**
+- **Overall**: 65% line coverage (531 tests)
 - **actions**: 85%+ (includes Test & Javadoc generation)
 - **api**: 97% (312/320 lines)
 - **completion**: 95% (751/784 lines)
 - **options**: 99% (710/716 lines)
 - **ui**: 95% (516/538 lines)
 - **util**: 93% (161/172 lines)
-- **testing**: 100% (CodeAnalyzer, TestGenerator)
-- **documentation**: 100% (JavadocGenerator, MethodSignatureExtractor)
+- **testing**: 100% (new - Test Generation)
+- **documentation**: 100% (new - Javadoc Generation)
+- **debugging**: 100% (new - Debug Assistance)
+
+**Other AI Modules (Experimental - Low Coverage):**
+- Gemini, ChatGPT, Grok, Mistral, Perplexity, Cohere, DeepSeek, OpenRouter: <10% coverage each
+- Minimal tests (basic construction and API tests only)
+- **Status: Functional but not production-ready**
+
+**Language Modules (Early Stage):**
+- Basic infrastructure tests only
+- LSP integration not fully tested
+- **Status: Experimental - use with caution**
 
 **Test Infrastructure:**
 - JUnit 5 for test framework
