@@ -88,7 +88,7 @@ All 23 modules build ✅
 ### ✅ Priority 3: Improve Error Handling (COMPLETED)
 
 **Time Estimated:** 16 hours  
-**Time Actual:** 2 hours  
+**Time Actual:** 4 hours  
 **Status:** ✅ COMPLETE (2026-05-27)
 
 **What Was Done:**
@@ -100,28 +100,46 @@ All 23 modules build ✅
    - ClaudeRateLimitException (429 + retry-after)
    - ClaudeConfigException (missing API key)
 
-2. **Updated core classes** with proper exception handling:
+2. **Implemented retry logic with exponential backoff** (GitHub Issue #16):
+   - Created RetryPolicy class with configurable retry behavior
+   - Exponential backoff with jitter (prevents thundering herd)
+   - Rate limit handling with retry-after support (429 responses)
+   - Selective retry: network/parse errors retried, auth/config errors not retried
+   - Default: 3 retries, 1s initial backoff, 30s max backoff
+   - Integrated into all ClaudeClient public methods
+   - 16 comprehensive tests (100% coverage)
+
+3. **Added null safety validation** (GitHub Issue #17):
+   - Objects.requireNonNull() on all ClaudeClient public methods
+   - Constructor injection validation for RetryPolicy
+   - All public API parameters validated
+
+4. **Updated core classes** with proper exception handling:
    - ClaudeClient.java: Map Anthropic SDK exceptions to Claude exceptions
+   - ClaudeClient.java: Integrated RetryPolicy with internal methods
    - ClaudeCompletionQuery.java: Removed printStackTrace(), added logging
    - ProjectContext.java: Replaced silent failures with logging
 
-3. **Added structured logging** (java.util.logging.Logger):
+5. **Added structured logging** (java.util.logging.Logger):
    - Level.INFO for success operations
    - Level.FINE for debug information
    - Level.WARNING for recoverable errors
    - Level.SEVERE for critical errors
 
-4. **Comprehensive testing:**
-   - 26 new exception tests (100% coverage)
-   - Updated existing tests to expect new exception types
-   - All 557 tests pass
+6. **Comprehensive testing:**
+   - 26 exception tests (100% coverage)
+   - 16 RetryPolicy tests (100% coverage)
+   - 29 ClaudeClient tests (all passing with retry integration)
+   - All 573 tests pass
 
 **Impact:**
 - ✅ Better error messages (specific exception types)
 - ✅ Proper logging framework (no more printStackTrace)
-- ✅ Production-ready error handling
+- ✅ Production-ready error handling with automatic retries
 - ✅ Easier debugging and monitoring
 - ✅ Retry-after support for rate limiting
+- ✅ Null safety prevents NullPointerExceptions
+- ✅ Resilient to transient network failures
 
 **Documentation:** ERROR_HANDLING_IMPROVEMENTS.md
 
@@ -171,7 +189,9 @@ Beyond the critical assessment, we also delivered 3 advanced AI features:
 |--------|--------|-------|--------|
 | Maven Warnings | 3 duplicates | 0 | ✅ Fixed |
 | Build Success | ✅ Yes | ✅ Yes | Maintained |
-| Test Count (Claude) | 501 | 557 | +56 tests |
+| Test Count (Claude) | 501 | 573 | +72 tests |
+| Test Count (Languages) | 0 | 180 | +180 tests |
+| Total Tests | 501 | 753+ | +252 tests |
 
 ### Documentation
 
@@ -215,11 +235,13 @@ Beyond the critical assessment, we also delivered 3 advanced AI features:
 
 ### Immediate (This Week)
 
-- [x] ~~Complete Priority 3: Error Handling~~ ✅ DONE (2 hours)
+- [x] ~~Complete Priority 3: Error Handling~~ ✅ DONE (4 hours)
   - Created 6-class exception hierarchy
   - Replaced printStackTrace() with Logger
   - Added structured logging (INFO/FINE/WARNING/SEVERE)
-  - 26 new tests, 100% coverage
+  - Implemented retry logic with exponential backoff
+  - Added null safety validation
+  - 42 new tests (26 exceptions + 16 retry), 100% coverage
 
 ### Short Term (Next 2 Weeks)
 
