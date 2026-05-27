@@ -1,0 +1,107 @@
+/*
+ * Copyright 2026 FlossWare.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package org.flossware.netbeans.cohere.options;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import javax.swing.JComponent;
+import org.netbeans.spi.options.OptionsPanelController;
+import org.openide.util.HelpCtx;
+import org.openide.util.Lookup;
+
+/**
+ * Controller for Cohere options panel
+ */
+@OptionsPanelController.SubRegistration(
+        location = "Advanced",
+        displayName = "#AdvancedOption_DisplayName_Cohere",
+        keywords = "#AdvancedOption_Keywords_Cohere",
+        keywordsCategory = "Advanced/Cohere"
+)
+@org.openide.util.NbBundle.Messages({
+    "AdvancedOption_DisplayName_Cohere=Cohere AI",
+    "AdvancedOption_Keywords_Cohere=cohere ai api key"
+})
+public final class CohereOptionsPanelController extends OptionsPanelController {
+
+    private CohereOptionsPanel panel;
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private boolean changed;
+
+    @Override
+    public void update() {
+        getPanel().load();
+        changed = false;
+    }
+
+    @Override
+    public void applyChanges() {
+        getPanel().store();
+        changed = false;
+    }
+
+    @Override
+    public void cancel() {
+        // No action needed
+    }
+
+    @Override
+    public boolean isValid() {
+        return getPanel().valid();
+    }
+
+    @Override
+    public boolean isChanged() {
+        return changed;
+    }
+
+    @Override
+    public HelpCtx getHelpCtx() {
+        return HelpCtx.DEFAULT_HELP;
+    }
+
+    @Override
+    public JComponent getComponent(Lookup masterLookup) {
+        return getPanel();
+    }
+
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener l) {
+        pcs.addPropertyChangeListener(l);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener l) {
+        pcs.removePropertyChangeListener(l);
+    }
+
+    private CohereOptionsPanel getPanel() {
+        if (panel == null) {
+            panel = new CohereOptionsPanel(this);
+        }
+        return panel;
+    }
+
+    void changed() {
+        if (!changed) {
+            changed = true;
+            pcs.firePropertyChange(OptionsPanelController.PROP_CHANGED, false, true);
+        }
+        pcs.firePropertyChange(OptionsPanelController.PROP_VALID, null, null);
+    }
+}

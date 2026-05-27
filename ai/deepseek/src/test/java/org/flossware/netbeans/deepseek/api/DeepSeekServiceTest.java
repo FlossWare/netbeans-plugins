@@ -17,60 +17,88 @@
 
 package org.flossware.netbeans.deepseek.api;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-/**
- * Tests for DeepSeekService
- */
-public class DeepSeekServiceTest {
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
-    @Test
-    public void testGetInstance() {
-        DeepSeekService service1 = DeepSeekService.getInstance();
-        DeepSeekService service2 = DeepSeekService.getInstance();
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-        assertThat(service1).isNotNull();
-        assertThat(service2).isNotNull();
-        assertThat(service1).isSameAs(service2);
+@ExtendWith(MockitoExtension.class)
+class DeepSeekServiceTest {
+
+    private DeepSeekService service;
+
+    @Mock
+    private DeepSeekClient mockClient;
+
+    @BeforeEach
+    void setUp() {
+        try {
+            java.lang.reflect.Field instance = DeepSeekService.class.getDeclaredField("instance");
+            instance.setAccessible(true);
+            instance.set(null, null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        service = DeepSeekService.getInstance();
+
+        try {
+            java.lang.reflect.Field client = DeepSeekService.class.getDeclaredField("client");
+            client.setAccessible(true);
+            client.set(service, mockClient);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    public void testGetClient() {
-        DeepSeekService service = DeepSeekService.getInstance();
-        DeepSeekClient client = service.getClient();
+    void testGetInstance_ReturnsSameInstance() {
+        DeepSeekService instance1 = DeepSeekService.getInstance();
+        DeepSeekService instance2 = DeepSeekService.getInstance();
 
-        assertThat(client).isNotNull();
+        assertThat(instance1).isSameAs(instance2);
     }
 
     @Test
-    public void testClearHistory() {
-        DeepSeekService service = DeepSeekService.getInstance();
+    void testSendMessageAsync_Success() throws Exception {
+        String expectedResponse = "Hello from DeepSeek!";
+        when(mockClient.sendMessage(anyString())).thenReturn(expectedResponse);
 
-        // Should not throw exception
-        service.clearHistory();
+        CompletableFuture<String> future = service.sendMessageAsync("Hello");
+        String result = future.get(5, TimeUnit.SECONDS);
 
-        assertThat(service.getHistorySize()).isEqualTo(0);
+        assertThat(result).isEqualTo(expectedResponse);
+        verify(mockClient).sendMessage("Hello");
     }
 
     @Test
-    public void testIsConfigured() {
-        DeepSeekService service = DeepSeekService.getInstance();
+    void testSendMessageAsync_Failure() throws Exception {
+        when(mockClient.sendMessage(anyString())).thenThrow(new RuntimeException("API Error"));
 
-        // Without API key, should return false
-        // Note: This test assumes no API key is configured in test environment
-        boolean configured = service.isConfigured();
+        CompletableFuture<String> future = service.sendMessageAsync("Hello");
 
-        // We just verify the method doesn't throw an exception
-        assertThat(configured).isIn(true, false);
+        assertThatThrownBy(() -> future.get(5, TimeUnit.SECONDS))
+            .hasCauseInstanceOf(RuntimeException.class)
+            .hasMessageContaining("API Error");
     }
 
     @Test
-    public void testGetHistorySize() {
-        DeepSeekService service = DeepSeekService.getInstance();
-        service.clearHistory();
+    void testSendMessageWithContextAsync_Success() throws Exception {
+        String expectedResponse = "Code analysis complete";
+        when(mockClient.sendMessageWithContext(anyString(), anyString())).thenReturn(expectedResponse);
 
-        int size = service.getHistorySize();
-        assertThat(size).isGreaterThanOrEqualTo(0);
+        CompletableFuture<String> future = service.sendMessageWithContextAsync("Analyze code", "public class Test {}");
+        String result = future.get(5, TimeUnit.SECONDS);
+
+        assertThat(result).isEqualTo(expectedResponse);
+        verify(mockClient).sendMessageWithContext("Analyze code", "public class Test {}");
     }
 }

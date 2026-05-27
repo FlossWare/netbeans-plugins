@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.flossware.netbeans.mistral.api;
+package org.flossware.netbeans.cohere.api;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,27 +31,27 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MistralServiceTest {
+class CohereServiceTest {
 
-    private MistralService service;
+    private CohereService service;
 
     @Mock
-    private MistralClient mockClient;
+    private CohereClient mockClient;
 
     @BeforeEach
     void setUp() {
         try {
-            java.lang.reflect.Field instance = MistralService.class.getDeclaredField("instance");
+            java.lang.reflect.Field instance = CohereService.class.getDeclaredField("instance");
             instance.setAccessible(true);
             instance.set(null, null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        service = MistralService.getInstance();
+        service = CohereService.getInstance();
 
         try {
-            java.lang.reflect.Field client = MistralService.class.getDeclaredField("client");
+            java.lang.reflect.Field client = CohereService.class.getDeclaredField("client");
             client.setAccessible(true);
             client.set(service, mockClient);
         } catch (Exception e) {
@@ -61,15 +61,15 @@ class MistralServiceTest {
 
     @Test
     void testGetInstance_ReturnsSameInstance() {
-        MistralService instance1 = MistralService.getInstance();
-        MistralService instance2 = MistralService.getInstance();
+        CohereService instance1 = CohereService.getInstance();
+        CohereService instance2 = CohereService.getInstance();
 
         assertThat(instance1).isSameAs(instance2);
     }
 
     @Test
     void testSendMessageAsync_Success() throws Exception {
-        String expectedResponse = "Hello from Mistral!";
+        String expectedResponse = "Hello from Cohere!";
         when(mockClient.sendMessage(anyString())).thenReturn(expectedResponse);
 
         CompletableFuture<String> future = service.sendMessageAsync("Hello");
