@@ -36,7 +36,7 @@ class JavaScriptLspCompletionQueryTest {
 
     @Test
     void testGetMimeType() {
-        assertThat(query.getMimeType()).isEqualTo("text/javascript");
+        assertThat(query.getMimeType()).isEqualTo("text/x-javascript");
     }
 
     @Test

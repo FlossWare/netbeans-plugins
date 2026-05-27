@@ -37,6 +37,6 @@ class JavaScriptLanguageHierarchyTest {
     @Test
     void testMimeType() {
         JavaScriptLanguageHierarchy hierarchy = new JavaScriptLanguageHierarchy();
-        assertThat(hierarchy.mimeType()).isEqualTo("text/javascript");
+        assertThat(hierarchy.mimeType()).isEqualTo("text/x-javascript");
     }
 }

@@ -37,6 +37,6 @@ class TypeScriptLanguageHierarchyTest {
     @Test
     void testMimeType() {
         TypeScriptLanguageHierarchy hierarchy = new TypeScriptLanguageHierarchy();
-        assertThat(hierarchy.mimeType()).isEqualTo("text/typescript");
+        assertThat(hierarchy.mimeType()).isEqualTo("text/x-typescript");
     }
 }

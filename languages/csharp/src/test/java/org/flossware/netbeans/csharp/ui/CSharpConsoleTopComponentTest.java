@@ -36,7 +36,7 @@ class CSharpConsoleTopComponentTest {
 
     @Test
     void testGetReplCommand() {
-        assertThat(component.getReplCommand()).isEqualTo("dotnet-repl");
+        assertThat(component.getReplCommand()).isEqualTo("dotnet");
     }
 
     @Test

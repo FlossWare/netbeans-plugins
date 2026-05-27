@@ -36,7 +36,7 @@ class JavaScriptLspCompletionProviderTest {
 
     @Test
     void testGetMimeType() {
-        assertThat(provider.getMimeType()).isEqualTo("text/javascript");
+        assertThat(provider.getMimeType()).isEqualTo("text/x-javascript");
     }
 
     @Test

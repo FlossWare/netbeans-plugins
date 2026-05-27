@@ -27,12 +27,14 @@ import com.anthropic.models.messages.MessageParam;
 import com.anthropic.models.messages.RawMessageStreamEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import org.flossware.netbeans.claude.exceptions.ClaudeAuthException;
 import org.flossware.netbeans.claude.exceptions.ClaudeConfigException;
+import org.flossware.netbeans.claude.exceptions.ClaudeException;
 import org.flossware.netbeans.claude.exceptions.ClaudeNetworkException;
 import org.flossware.netbeans.claude.exceptions.ClaudeParseException;
 import org.flossware.netbeans.claude.exceptions.ClaudeRateLimitException;
@@ -53,9 +55,17 @@ public class ClaudeClient {
 
     private AnthropicClient client;
     private final List<MessageParam> conversationHistory;
+    private final RetryPolicy retryPolicy;
 
     public ClaudeClient() {
         this.conversationHistory = new ArrayList<>();
+        this.retryPolicy = new RetryPolicy();
+        initializeClient();
+    }
+
+    public ClaudeClient(RetryPolicy retryPolicy) {
+        this.conversationHistory = new ArrayList<>();
+        this.retryPolicy = Objects.requireNonNull(retryPolicy, "retryPolicy cannot be null");
         initializeClient();
     }
 
@@ -106,12 +116,18 @@ public class ClaudeClient {
     /**
      * Send a message to Claude and get a response
      */
-    public String sendMessage(String userMessage) throws ClaudeConfigException, ClaudeAuthException, ClaudeNetworkException, ClaudeParseException, ClaudeRateLimitException {
+    public String sendMessage(String userMessage) throws ClaudeException {
+        Objects.requireNonNull(userMessage, "userMessage cannot be null");
+
         if (!isConfigured()) {
             LOGGER.log(Level.WARNING, "Attempted to send message without API key configured");
             throw new ClaudeConfigException("API key not configured. Please configure your Anthropic API key in Tools > Options > Claude");
         }
 
+        return retryPolicy.executeWithRetry(() -> sendMessageInternal(userMessage));
+    }
+
+    private String sendMessageInternal(String userMessage) throws ClaudeException {
         LOGGER.log(Level.FINE, "Sending message to Claude API");
 
         // Get preferences
@@ -172,7 +188,10 @@ public class ClaudeClient {
     /**
      * Send a message with code context
      */
-    public String sendMessageWithContext(String userMessage, String codeContext) throws ClaudeConfigException, ClaudeAuthException, ClaudeNetworkException, ClaudeParseException, ClaudeRateLimitException {
+    public String sendMessageWithContext(String userMessage, String codeContext) throws ClaudeException {
+        Objects.requireNonNull(userMessage, "userMessage cannot be null");
+        Objects.requireNonNull(codeContext, "codeContext cannot be null");
+
         String fullMessage = String.format(
             "Here is the code context:\n\n```\n%s\n```\n\nUser question: %s",
             codeContext,
@@ -212,12 +231,19 @@ public class ClaudeClient {
      * @param onChunk Callback for each streamed chunk
      * @return The complete response
      */
-    public String sendMessageStreaming(String userMessage, Consumer<String> onChunk) throws ClaudeConfigException, ClaudeAuthException, ClaudeNetworkException, ClaudeParseException, ClaudeRateLimitException {
+    public String sendMessageStreaming(String userMessage, Consumer<String> onChunk) throws ClaudeException {
+        Objects.requireNonNull(userMessage, "userMessage cannot be null");
+        Objects.requireNonNull(onChunk, "onChunk callback cannot be null");
+
         if (!isConfigured()) {
             LOGGER.log(Level.WARNING, "Attempted to send streaming message without API key configured");
             throw new ClaudeConfigException("API key not configured. Please configure your Anthropic API key in Tools > Options > Claude");
         }
 
+        return retryPolicy.executeWithRetry(() -> sendMessageStreamingInternal(userMessage, onChunk));
+    }
+
+    private String sendMessageStreamingInternal(String userMessage, Consumer<String> onChunk) throws ClaudeException {
         LOGGER.log(Level.FINE, "Sending streaming message to Claude API");
 
         // Get preferences
@@ -291,7 +317,11 @@ public class ClaudeClient {
     /**
      * Send a message with code context and streaming
      */
-    public String sendMessageWithContextStreaming(String userMessage, String codeContext, Consumer<String> onChunk) throws ClaudeConfigException, ClaudeAuthException, ClaudeNetworkException, ClaudeParseException, ClaudeRateLimitException {
+    public String sendMessageWithContextStreaming(String userMessage, String codeContext, Consumer<String> onChunk) throws ClaudeException {
+        Objects.requireNonNull(userMessage, "userMessage cannot be null");
+        Objects.requireNonNull(codeContext, "codeContext cannot be null");
+        Objects.requireNonNull(onChunk, "onChunk callback cannot be null");
+
         String fullMessage = String.format(
             "Here is the code context:\n\n```\n%s\n```\n\nUser question: %s",
             codeContext,

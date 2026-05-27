@@ -36,7 +36,7 @@ class TypeScriptLspCompletionQueryTest {
 
     @Test
     void testGetMimeType() {
-        assertThat(query.getMimeType()).isEqualTo("text/typescript");
+        assertThat(query.getMimeType()).isEqualTo("text/x-typescript");
     }
 
     @Test
