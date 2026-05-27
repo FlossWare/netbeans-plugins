@@ -28,13 +28,22 @@ import com.anthropic.models.messages.RawMessageStreamEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import org.flossware.netbeans.claude.exceptions.ClaudeAuthException;
+import org.flossware.netbeans.claude.exceptions.ClaudeConfigException;
+import org.flossware.netbeans.claude.exceptions.ClaudeNetworkException;
+import org.flossware.netbeans.claude.exceptions.ClaudeParseException;
+import org.flossware.netbeans.claude.exceptions.ClaudeRateLimitException;
 import org.openide.util.NbPreferences;
 
 /**
  * Client for interacting with Claude API
  */
 public class ClaudeClient {
+
+    private static final Logger LOGGER = Logger.getLogger(ClaudeClient.class.getName());
 
     private static final String PREF_API_KEY = "anthropic.api.key";
     private static final String PREF_MODEL = "anthropic.model";
@@ -53,9 +62,15 @@ public class ClaudeClient {
     private void initializeClient() {
         String apiKey = getApiKey();
         if (apiKey != null && !apiKey.isEmpty()) {
-            client = AnthropicOkHttpClient.builder()
-                    .apiKey(apiKey)
-                    .build();
+            try {
+                client = AnthropicOkHttpClient.builder()
+                        .apiKey(apiKey)
+                        .build();
+                LOGGER.log(Level.INFO, "Claude client initialized successfully");
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Failed to initialize Claude client", e);
+                client = null;
+            }
         }
     }
 
@@ -91,10 +106,13 @@ public class ClaudeClient {
     /**
      * Send a message to Claude and get a response
      */
-    public String sendMessage(String userMessage) throws Exception {
+    public String sendMessage(String userMessage) throws ClaudeConfigException, ClaudeAuthException, ClaudeNetworkException, ClaudeParseException, ClaudeRateLimitException {
         if (!isConfigured()) {
-            throw new IllegalStateException("API key not configured. Please configure your Anthropic API key in Tools > Options > Claude");
+            LOGGER.log(Level.WARNING, "Attempted to send message without API key configured");
+            throw new ClaudeConfigException("API key not configured. Please configure your Anthropic API key in Tools > Options > Claude");
         }
+
+        LOGGER.log(Level.FINE, "Sending message to Claude API");
 
         // Get preferences
         Preferences prefs = NbPreferences.forModule(ClaudeClient.class);
@@ -117,7 +135,23 @@ public class ClaudeClient {
         paramsBuilder.addUserMessage(userMessage);
 
         // Send request
-        Message response = client.messages().create(paramsBuilder.build());
+        Message response;
+        try {
+            response = client.messages().create(paramsBuilder.build());
+        } catch (com.anthropic.errors.AnthropicServiceException e) {
+            LOGGER.log(Level.SEVERE, "Claude API service error", e);
+            int statusCode = e.statusCode();
+            if (statusCode == 401 || statusCode == 403) {
+                throw new ClaudeAuthException("Authentication failed: " + e.getMessage(), e);
+            } else if (statusCode == 429) {
+                throw new ClaudeRateLimitException("Rate limit exceeded: " + e.getMessage(), e);
+            } else {
+                throw new ClaudeNetworkException("API request failed: " + e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Unexpected error calling Claude API", e);
+            throw new ClaudeParseException("Failed to parse API response: " + e.getMessage(), e);
+        }
 
         // Store in conversation history
         conversationHistory.add(MessageParam.builder()
@@ -129,6 +163,8 @@ public class ClaudeClient {
                 .content(extractTextFromResponse(response))
                 .build());
 
+        LOGGER.log(Level.FINE, "Successfully received response from Claude API");
+
         // Extract text response
         return extractTextFromResponse(response);
     }
@@ -136,7 +172,7 @@ public class ClaudeClient {
     /**
      * Send a message with code context
      */
-    public String sendMessageWithContext(String userMessage, String codeContext) throws Exception {
+    public String sendMessageWithContext(String userMessage, String codeContext) throws ClaudeConfigException, ClaudeAuthException, ClaudeNetworkException, ClaudeParseException, ClaudeRateLimitException {
         String fullMessage = String.format(
             "Here is the code context:\n\n```\n%s\n```\n\nUser question: %s",
             codeContext,
@@ -176,10 +212,13 @@ public class ClaudeClient {
      * @param onChunk Callback for each streamed chunk
      * @return The complete response
      */
-    public String sendMessageStreaming(String userMessage, Consumer<String> onChunk) throws Exception {
+    public String sendMessageStreaming(String userMessage, Consumer<String> onChunk) throws ClaudeConfigException, ClaudeAuthException, ClaudeNetworkException, ClaudeParseException, ClaudeRateLimitException {
         if (!isConfigured()) {
-            throw new IllegalStateException("API key not configured. Please configure your Anthropic API key in Tools > Options > Claude");
+            LOGGER.log(Level.WARNING, "Attempted to send streaming message without API key configured");
+            throw new ClaudeConfigException("API key not configured. Please configure your Anthropic API key in Tools > Options > Claude");
         }
+
+        LOGGER.log(Level.FINE, "Sending streaming message to Claude API");
 
         // Get preferences
         Preferences prefs = NbPreferences.forModule(ClaudeClient.class);
@@ -217,6 +256,19 @@ public class ClaudeClient {
                             onChunk.accept(text);
                         }
                     });
+        } catch (com.anthropic.errors.AnthropicServiceException e) {
+            LOGGER.log(Level.SEVERE, "Claude API service error during streaming", e);
+            int statusCode = e.statusCode();
+            if (statusCode == 401 || statusCode == 403) {
+                throw new ClaudeAuthException("Authentication failed: " + e.getMessage(), e);
+            } else if (statusCode == 429) {
+                throw new ClaudeRateLimitException("Rate limit exceeded: " + e.getMessage(), e);
+            } else {
+                throw new ClaudeNetworkException("API request failed: " + e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Unexpected error during streaming", e);
+            throw new ClaudeParseException("Failed to parse streaming response: " + e.getMessage(), e);
         }
 
         String completeResponse = fullResponse.toString();
@@ -231,13 +283,15 @@ public class ClaudeClient {
                 .content(completeResponse)
                 .build());
 
+        LOGGER.log(Level.FINE, "Successfully received streaming response from Claude API");
+
         return completeResponse;
     }
 
     /**
      * Send a message with code context and streaming
      */
-    public String sendMessageWithContextStreaming(String userMessage, String codeContext, Consumer<String> onChunk) throws Exception {
+    public String sendMessageWithContextStreaming(String userMessage, String codeContext, Consumer<String> onChunk) throws ClaudeConfigException, ClaudeAuthException, ClaudeNetworkException, ClaudeParseException, ClaudeRateLimitException {
         String fullMessage = String.format(
             "Here is the code context:\n\n```\n%s\n```\n\nUser question: %s",
             codeContext,

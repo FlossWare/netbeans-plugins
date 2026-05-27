@@ -19,17 +19,21 @@ package org.flossware.netbeans.claude.completion;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.text.JTextComponent;
 import org.flossware.netbeans.claude.api.ClaudeService;
 import org.flossware.netbeans.claude.completion.CompletionContextBuilder.CompletionContext;
+import org.flossware.netbeans.claude.exceptions.ClaudeException;
 import org.netbeans.spi.editor.completion.CompletionResultSet;
 import org.netbeans.spi.editor.completion.support.AsyncCompletionQuery;
-import org.openide.util.Exceptions;
 
 /**
  * Async query for Claude code completions
  */
 public class ClaudeCompletionQuery extends AsyncCompletionQuery {
+
+    private static final Logger LOGGER = Logger.getLogger(ClaudeCompletionQuery.class.getName());
 
     private final JTextComponent component;
 
@@ -86,17 +90,21 @@ public class ClaudeCompletionQuery extends AsyncCompletionQuery {
                 items.forEach(resultSet::addItem);
                 resultSet.finish();
             }).exceptionally(ex -> {
-                Exceptions.printStackTrace(ex);
+                if (ex.getCause() instanceof ClaudeException) {
+                    LOGGER.log(Level.WARNING, "Claude API error during completion: {0}", ex.getCause().getMessage());
+                } else {
+                    LOGGER.log(Level.SEVERE, "Unexpected error during completion", ex);
+                }
                 resultSet.finish();
                 return null;
             });
 
         } catch (Exception ex) {
-            Exceptions.printStackTrace(ex);
+            LOGGER.log(Level.SEVERE, "Unexpected error in completion query", ex);
             try {
                 resultSet.finish();
             } catch (Exception e) {
-                // Ignore exceptions from finish() itself
+                LOGGER.log(Level.SEVERE, "Error finishing result set", e);
             }
         }
     }

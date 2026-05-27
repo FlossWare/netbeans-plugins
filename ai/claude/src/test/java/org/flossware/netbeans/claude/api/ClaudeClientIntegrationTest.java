@@ -84,7 +84,7 @@ class ClaudeClientIntegrationTest {
         client.setApiKey("");
         
         assertThatThrownBy(() -> client.sendMessage("test"))
-            .isInstanceOf(IllegalStateException.class)
+            .isInstanceOf(org.flossware.netbeans.claude.exceptions.ClaudeConfigException.class)
             .hasMessageContaining("API key not configured");
     }
 
@@ -93,7 +93,7 @@ class ClaudeClientIntegrationTest {
         client.setApiKey("");
         
         assertThatThrownBy(() -> client.sendMessageWithContext("message", "context"))
-            .isInstanceOf(IllegalStateException.class)
+            .isInstanceOf(org.flossware.netbeans.claude.exceptions.ClaudeConfigException.class)
             .hasMessageContaining("API key not configured");
     }
 
@@ -102,7 +102,7 @@ class ClaudeClientIntegrationTest {
         client.setApiKey("");
         
         assertThatThrownBy(() -> client.sendMessageStreaming("test", chunk -> {}))
-            .isInstanceOf(IllegalStateException.class)
+            .isInstanceOf(org.flossware.netbeans.claude.exceptions.ClaudeConfigException.class)
             .hasMessageContaining("API key not configured");
     }
 
@@ -111,7 +111,7 @@ class ClaudeClientIntegrationTest {
         client.setApiKey("");
         
         assertThatThrownBy(() -> client.sendMessageWithContextStreaming("msg", "ctx", chunk -> {}))
-            .isInstanceOf(IllegalStateException.class)
+            .isInstanceOf(org.flossware.netbeans.claude.exceptions.ClaudeConfigException.class)
             .hasMessageContaining("API key not configured");
     }
 

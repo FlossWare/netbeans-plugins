@@ -81,7 +81,7 @@ class ClaudeClientTest {
     void testSendMessage_NoApiKey() {
         client.setApiKey("");
         assertThatThrownBy(() -> client.sendMessage("test"))
-            .isInstanceOf(IllegalStateException.class)
+            .isInstanceOf(org.flossware.netbeans.claude.exceptions.ClaudeConfigException.class)
             .hasMessageContaining("API key not configured");
     }
 
@@ -92,7 +92,7 @@ class ClaudeClientTest {
         assertThatCode(() -> {
             try {
                 client.sendMessage(null);
-            } catch (IllegalStateException | NullPointerException e) {
+            } catch (org.flossware.netbeans.claude.exceptions.ClaudeConfigException | NullPointerException e) {
                 // Expected - either no API key validation or null message
             } catch (Exception e) {
                 // Other exceptions are also acceptable (network, API errors)
@@ -116,7 +116,7 @@ class ClaudeClientTest {
     void testSendMessageWithContext_NoApiKey() {
         client.setApiKey("");
         assertThatThrownBy(() -> client.sendMessageWithContext("test", "context"))
-            .isInstanceOf(IllegalStateException.class)
+            .isInstanceOf(org.flossware.netbeans.claude.exceptions.ClaudeConfigException.class)
             .hasMessageContaining("API key not configured");
     }
 
@@ -160,7 +160,7 @@ class ClaudeClientTest {
     void testSendMessageStreaming_NoApiKey() {
         client.setApiKey("");
         assertThatThrownBy(() -> client.sendMessageStreaming("test", chunk -> {}))
-            .isInstanceOf(IllegalStateException.class)
+            .isInstanceOf(org.flossware.netbeans.claude.exceptions.ClaudeConfigException.class)
             .hasMessageContaining("API key not configured");
     }
 
@@ -192,7 +192,7 @@ class ClaudeClientTest {
     void testSendMessageWithContextStreaming_NoApiKey() {
         client.setApiKey("");
         assertThatThrownBy(() -> client.sendMessageWithContextStreaming("msg", "ctx", chunk -> {}))
-            .isInstanceOf(IllegalStateException.class)
+            .isInstanceOf(org.flossware.netbeans.claude.exceptions.ClaudeConfigException.class)
             .hasMessageContaining("API key not configured");
     }
 

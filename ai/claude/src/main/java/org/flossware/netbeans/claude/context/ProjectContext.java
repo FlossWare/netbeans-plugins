@@ -27,6 +27,8 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
@@ -39,6 +41,8 @@ import org.openide.filesystems.FileUtil;
  * Manages project context for Claude
  */
 public class ProjectContext {
+
+    private static final Logger LOGGER = Logger.getLogger(ProjectContext.class.getName());
 
     private final Project project;
     private static final int MAX_FILE_SIZE = 100 * 1024; // 100KB
@@ -58,6 +62,7 @@ public class ProjectContext {
         try {
             return ProjectUtils.getInformation(project).getDisplayName();
         } catch (Exception e) {
+            LOGGER.log(Level.FINE, "Platform not fully initialized for project name retrieval");
             // Fallback when platform is not fully initialized
             return project != null && project.getProjectDirectory() != null
                     ? project.getProjectDirectory().getName()
@@ -95,7 +100,7 @@ public class ProjectContext {
                         .append(": ").append(group.getRootFolder().getPath()).append("\n");
             }
         } catch (Exception e) {
-            // Platform not fully initialized, skip source groups
+            LOGGER.log(Level.FINE, "Platform not fully initialized for source groups");
             summary.append("Source Structure: N/A\n");
         }
 
@@ -154,6 +159,7 @@ public class ProjectContext {
         try {
             return file.asText();
         } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Failed to read file: {0}", file.getPath());
             return null;
         }
     }
