@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <!-- C# MIME type -->
+    <folder name="Loaders">
+        <folder name="text">
+            <folder name="x-csharp">
+                <folder name="Actions">
+                    <file name="org-flossware-netbeans-csharp-execution-RunCSharpAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/CSharp/org-flossware-netbeans-csharp-execution-RunCSharpAction.instance"/>
+                        <attr name="position" intvalue="100"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+
+    <!-- Editor Popup Menu -->
+    <folder name="Editors">
+        <folder name="text">
+            <folder name="x-csharp">
+                <folder name="Popup">
+                    <file name="org-flossware-netbeans-csharp-execution-RunCSharpAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/CSharp/org-flossware-netbeans-csharp-execution-RunCSharpAction.instance"/>
+                        <attr name="position" intvalue="100"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+
+    <!-- Actions -->
+    <folder name="Actions">
+        <folder name="CSharp">
+            <file name="org-flossware-netbeans-csharp-execution-RunCSharpAction.instance">
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="displayName" bundlevalue="org.flossware.netbeans.csharp.Bundle#CTL_RunCSharpAction"/>
+            </file>
+        </folder>
+        <folder name="Debug">
+            <file name="org-flossware-netbeans-csharp-debugger-DebugCSharpAction.instance">
+                <attr name="instanceCreate" methodvalue="org.flossware.netbeans.csharp.debugger.DebugCSharpAction.create"/>
+            </file>
+        </folder>
+    </folder>
+
+    <!-- Menu -->
+    <folder name="Menu">
+        <folder name="Window">
+            <file name="org-flossware-netbeans-csharp-ui-CSharpConsoleTopComponent.shadow">
+                <attr name="originalFile" stringvalue="Actions/Window/org-flossware-netbeans-csharp-ui-CSharpConsoleTopComponent.instance"/>
+                <attr name="position" intvalue="333"/>
+            </file>
+        </folder>
+    </folder>
+
+    <!-- Services -->
+    <folder name="Services">
+        <folder name="MIMEResolver">
+            <file name="CSharpResolver.xml" url="CSharpResolver.xml">
+                <attr name="displayName" bundlevalue="org.flossware.netbeans.csharp.Bundle#Services/MIMEResolver/CSharpResolver.xml"/>
+            </file>
+        </folder>
+    </folder>
+
+    <!-- Language Registration -->
+    <folder name="Editors">
+        <folder name="text">
+            <folder name="x-csharp">
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.csharp.Bundle"/>
+                <file name="language.instance">
+                    <attr name="instanceOf" stringvalue="org.netbeans.api.lexer.Language"/>
+                    <attr name="instanceCreate" methodvalue="org.flossware.netbeans.csharp.lexer.CSharpTokenId.language"/>
+                </file>
+                <file name="FontsColors.xml" url="FontsColors.xml">
+                    <attr name="SystemFileSystem.localizingBundle" stringvalue="org.flossware.netbeans.csharp.Bundle"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

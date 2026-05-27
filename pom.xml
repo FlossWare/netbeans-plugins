@@ -27,6 +27,11 @@
         <!-- Language Support Plugins -->
         <module>languages/common</module>
         <module>languages/python</module>
+        <module>languages/go</module>
+        <module>languages/rust</module>
+        <module>languages/javascript</module>
+        <module>languages/typescript</module>
+        <module>languages/csharp</module>
         <module>languages/groovy</module>
         <module>languages/beanshell</module>
         <module>languages/mvel</module>
