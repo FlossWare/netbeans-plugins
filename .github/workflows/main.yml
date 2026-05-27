@@ -60,14 +60,14 @@ jobs:
 
       - name: Verify build success
         run: |
-          NBM_COUNT=$(find . -name "*.nbm" -path "*/target/nbm/*" | wc -l)
+          NBM_COUNT=$(find . -name "*.nbm" -path "*/target/*" -not -path "*/target/nbm/*" | wc -l)
           if [ "$NBM_COUNT" -ne 23 ]; then
             echo "❌ Expected 23 NBM files, found $NBM_COUNT"
-            find . -name "*.nbm" -path "*/target/nbm/*"
+            find . -name "*.nbm" -path "*/target/*"
             exit 1
           fi
           echo "✅ All 23 NBM files created successfully:"
-          find . -name "*.nbm" -path "*/target/nbm/*" -exec basename {} \;
+          find . -name "*.nbm" -path "*/target/*" -not -path "*/target/nbm/*" -exec basename {} \;
 
       - name: Upload NBM artifacts
         uses: actions/upload-artifact@v4
