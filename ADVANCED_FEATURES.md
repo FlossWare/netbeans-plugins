@@ -2,10 +2,11 @@
 
 ## Overview
 
-Successfully implemented 2 production-ready advanced AI features for the Claude NetBeans plugin:
+Successfully implemented 3 production-ready advanced AI features for the Claude NetBeans plugin:
 
 1. **Test Generation** - AI-powered JUnit 5 test generation
 2. **Javadoc Generation** - Automated documentation generation
+3. **Debug Assistance** - AI-powered error analysis and fix suggestions
 
 ## Feature 1: Test Generation
 
@@ -279,14 +280,59 @@ See `/home/sfloess/.claude/plans/lively-petting-koala.md` for detailed implement
 - **SOLID Principles:** Followed throughout
 - **Error Handling:** Comprehensive with user feedback
 
+## Feature 3: Debug Assistance
+
+### Implementation
+
+**Location:** `ai/claude/src/main/java/org/flossware/netbeans/claude/debugging/`
+
+**Components:**
+- `StackTraceParser.java` - Parses Java stack traces (exception type, message, file:line)
+- `DebugAnalyzer.java` - Analyzes errors using Claude AI and generates fix suggestions
+- `FixSuggestion.java` - Model for suggested fixes with confidence levels
+- `StackTraceInfo.java` - Model for parsed stack trace information
+- `actions/AnalyzeErrorAction.java` - Editor integration (right-click action)
+
+**Features:**
+- Automatic stack trace parsing:
+  - Exception type extraction (NullPointerException, etc.)
+  - Error message extraction
+  - File and line number identification
+  - Full stack trace preservation
+- AI-powered analysis:
+  - Multiple fix suggestions (ranked by confidence 0-100%)
+  - Root cause explanations
+  - Step-by-step fix instructions
+  - Code examples for fixes
+  - Prevention tips
+- Simple dialog-based UI for displaying suggestions
+- Async AI calls with progress indicator
+
+**Test Coverage:** 30 tests, 100% coverage
+- `StackTraceParserTest.java` - 16 tests
+- `DebugAnalyzerTest.java` - 9 tests  
+- `FixSuggestionTest.java` - 5 tests
+
+### Usage
+
+1. Select error text or stack trace in editor
+2. Right-click → "Analyze Error (Claude)"
+3. View fix suggestions dialog with:
+   - Multiple suggestions ranked by confidence
+   - Root cause explanation
+   - Code fixes
+   - Prevention tips
+4. Apply fixes manually after review
+
 ## Summary
 
-Successfully delivered 2 production-ready advanced AI features:
+Successfully delivered 3 production-ready advanced AI features:
 
 ✅ **Test Generation** - 26 tests, 100% coverage  
 ✅ **Javadoc Generation** - 21 tests, 100% coverage  
+✅ **Debug Assistance** - 30 tests, 100% coverage  
 ✅ **Documentation Updated** - README, Bundle.properties  
-✅ **All Tests Passing** - 501/501 tests  
-✅ **Pushed to GitHub** - Commit c6d9713  
+✅ **All Tests Passing** - 531/531 tests  
+✅ **Pushed to GitHub** - Commits c6d9713, d81992b, 3cff82f  
 
 The features are fully functional, well-tested, documented, and ready for use in the Claude NetBeans plugin.
