@@ -230,6 +230,8 @@ netbeans-plugins/
 - **[TEST_COVERAGE_SUMMARY.md](TEST_COVERAGE_SUMMARY.md)** - Comprehensive test coverage report (95%)
 - **[TESTING.md](TESTING.md)** - Testing guide and best practices
 - **[VERSIONING.md](VERSIONING.md)** - Version format (X.Y) and auto-versioning system
+- **[SCREENSHOTS.md](SCREENSHOTS.md)** - Visual walkthrough with screenshots 📸
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines for developers 🤝
 
 ### AI Plugins
 - **[ai/claude/README.md](ai/claude/README.md)** - Claude plugin documentation (95% test coverage)
