@@ -50,15 +50,15 @@ class ClaudeClientIntegrationTest {
     }
 
     @Test
-    void testHistoryManagement() {
+    void testHistoryManagement() throws org.flossware.netbeans.claude.exceptions.ClaudeException {
         assertThat(client.getHistorySize()).isEqualTo(0);
-        
+
         client.clearHistory();
         assertThat(client.getHistorySize()).isEqualTo(0);
     }
 
     @Test
-    void testMultipleClearHistory() {
+    void testMultipleClearHistory() throws org.flossware.netbeans.claude.exceptions.ClaudeException {
         for (int i = 0; i < 10; i++) {
             client.clearHistory();
             assertThat(client.getHistorySize()).isEqualTo(0);

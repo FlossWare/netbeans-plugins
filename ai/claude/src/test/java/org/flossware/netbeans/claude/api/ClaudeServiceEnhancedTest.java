@@ -21,6 +21,19 @@ class ClaudeServiceEnhancedTest {
 
     @BeforeEach
     void setUp() {
+        // Reset the singleton state before each test
+        try {
+            java.lang.reflect.Field instanceField = ClaudeService.class.getDeclaredField("instance");
+            instanceField.setAccessible(true);
+            instanceField.set(null, null);
+
+            java.lang.reflect.Field hasBeenShutdownField = ClaudeService.class.getDeclaredField("hasBeenShutdown");
+            hasBeenShutdownField.setAccessible(true);
+            hasBeenShutdownField.set(null, false);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
         service = ClaudeService.getInstance();
         service.clearHistory();
     }

@@ -4,9 +4,28 @@ package org.flossware.netbeans.claude.api;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import static org.assertj.core.api.Assertions.*;
 
 class ClaudeServiceTest {
+
+    @BeforeEach
+    void setUp() {
+        // Reset the singleton state before each test
+        // This is necessary because shutdown() makes getInstance() throw
+        try {
+            java.lang.reflect.Field instanceField = ClaudeService.class.getDeclaredField("instance");
+            instanceField.setAccessible(true);
+            instanceField.set(null, null);
+
+            java.lang.reflect.Field hasBeenShutdownField = ClaudeService.class.getDeclaredField("hasBeenShutdown");
+            hasBeenShutdownField.setAccessible(true);
+            hasBeenShutdownField.set(null, false);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            // Fields not found, test framework setup issue
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     void testGetInstance() {
@@ -99,10 +118,10 @@ class ClaudeServiceTest {
     void testSendMessageStreamingAsync_ReturnsCompletableFuture() {
         ClaudeService service = ClaudeService.getInstance();
         AtomicInteger chunkCount = new AtomicInteger(0);
-        
-        CompletableFuture<String> future = service.sendMessageStreamingAsync("test", 
+
+        CompletableFuture<String> future = service.sendMessageStreamingAsync("test",
             chunk -> chunkCount.incrementAndGet());
-        
+
         assertThat(future).isNotNull();
         assertThat(future).isInstanceOf(CompletableFuture.class);
     }
@@ -132,10 +151,10 @@ class ClaudeServiceTest {
     void testSendMessageWithContextStreamingAsync_ReturnsCompletableFuture() {
         ClaudeService service = ClaudeService.getInstance();
         AtomicInteger chunkCount = new AtomicInteger(0);
-        
+
         CompletableFuture<String> future = service.sendMessageWithContextStreamingAsync(
             "message", "context", chunk -> chunkCount.incrementAndGet());
-        
+
         assertThat(future).isNotNull();
         assertThat(future).isInstanceOf(CompletableFuture.class);
     }
@@ -167,11 +186,11 @@ class ClaudeServiceTest {
     @Test
     void testMultipleConcurrentRequests() {
         ClaudeService service = ClaudeService.getInstance();
-        
+
         CompletableFuture<String> future1 = service.sendMessageAsync("test1");
         CompletableFuture<String> future2 = service.sendMessageAsync("test2");
         CompletableFuture<String> future3 = service.sendMessageAsync("test3");
-        
+
         assertThat(future1).isNotNull();
         assertThat(future2).isNotNull();
         assertThat(future3).isNotNull();
@@ -184,5 +203,77 @@ class ClaudeServiceTest {
         service.clearHistory();
         service.clearHistory();
         assertThat(service.getHistorySize()).isEqualTo(0);
+    }
+
+    @Test
+    void testShutdown_PreventsGetInstance() {
+        ClaudeService service = ClaudeService.getInstance();
+        assertThat(service).isNotNull();
+
+        // Shutdown the service
+        ClaudeService.shutdown();
+
+        // Attempting to get a new instance should throw
+        assertThatThrownBy(ClaudeService::getInstance)
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessage("Service has been shut down and cannot be restarted");
+    }
+
+    @Test
+    void testShutdown_IsIdempotent() {
+        ClaudeService service = ClaudeService.getInstance();
+        assertThat(service).isNotNull();
+
+        // Multiple shutdown calls should not throw
+        assertThatCode(() -> {
+            ClaudeService.shutdown();
+            ClaudeService.shutdown();
+            ClaudeService.shutdown();
+        }).doesNotThrowAnyException();
+
+        // And getInstance should still throw
+        assertThatThrownBy(ClaudeService::getInstance)
+            .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void testInconsistentInstanceScenario() {
+        // Reproduces the scenario from issue #60:
+        // Thread A gets instance
+        ClaudeService serviceThreadA = ClaudeService.getInstance();
+        assertThat(serviceThreadA).isNotNull();
+
+        // Thread B shuts down the service
+        ClaudeService.shutdown();
+
+        // Old instance (Thread A) is now closed
+        assertThatThrownBy(() -> serviceThreadA.sendMessageAsync("test"))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessage("Service has been closed");
+
+        // Thread C cannot get a new instance (fix for inconsistency)
+        assertThatThrownBy(ClaudeService::getInstance)
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessage("Service has been shut down and cannot be restarted");
+
+        // This ensures consistent behavior: once shut down, all code paths fail
+        // rather than some paths getting a new instance (which would be inconsistent)
+    }
+
+    @Test
+    void testGetInstance_ConsistentBehaviorAfterShutdown() {
+        // Get initial instance
+        ClaudeService service1 = ClaudeService.getInstance();
+        assertThat(service1).isNotNull();
+
+        // Shutdown
+        ClaudeService.shutdown();
+
+        // All subsequent getInstance calls should fail consistently
+        for (int i = 0; i < 3; i++) {
+            assertThatThrownBy(ClaudeService::getInstance)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Service has been shut down and cannot be restarted");
+        }
     }
 }

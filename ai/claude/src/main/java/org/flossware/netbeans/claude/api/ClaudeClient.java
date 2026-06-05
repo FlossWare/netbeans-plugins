@@ -189,11 +189,14 @@ public class ClaudeClient implements AutoCloseable {
             throw new ClaudeConfigException("API key not configured. Please configure your Anthropic API key in Tools > Options > Claude");
         }
 
-        if (closed) {
-            throw new ClaudeException("Client has been closed");
+        // Synchronize check-and-use to prevent TOCTOU race condition
+        // between closed flag check and client usage
+        synchronized (this) {
+            if (closed) {
+                throw new ClaudeException("Client has been closed");
+            }
+            return retryPolicy.executeWithRetry(() -> sendMessageInternal(userMessage));
         }
-
-        return retryPolicy.executeWithRetry(() -> sendMessageInternal(userMessage));
     }
 
     private String sendMessageInternal(String userMessage) throws ClaudeException {
@@ -285,9 +288,18 @@ public class ClaudeClient implements AutoCloseable {
      * Clear conversation history
      *
      * <p>Thread-safe operation using CopyOnWriteArrayList</p>
+     *
+     * @throws ClaudeException if the client has been closed
      */
-    public void clearHistory() {
-        conversationHistory.clear();
+    public void clearHistory() throws ClaudeException {
+        // Synchronize check-and-use to prevent TOCTOU race condition
+        // between closed flag check and resource usage
+        synchronized (this) {
+            if (closed) {
+                throw new ClaudeException("Client has been closed");
+            }
+            conversationHistory.clear();
+        }
     }
 
     /**
@@ -336,11 +348,14 @@ public class ClaudeClient implements AutoCloseable {
             throw new ClaudeConfigException("API key not configured. Please configure your Anthropic API key in Tools > Options > Claude");
         }
 
-        if (closed) {
-            throw new ClaudeException("Client has been closed");
+        // Synchronize check-and-use to prevent TOCTOU race condition
+        // between closed flag check and client usage
+        synchronized (this) {
+            if (closed) {
+                throw new ClaudeException("Client has been closed");
+            }
+            return retryPolicy.executeWithRetry(() -> sendMessageStreamingInternal(userMessage, onChunk));
         }
-
-        return retryPolicy.executeWithRetry(() -> sendMessageStreamingInternal(userMessage, onChunk));
     }
 
     private String sendMessageStreamingInternal(String userMessage, Consumer<String> onChunk) throws ClaudeException {
@@ -447,9 +462,11 @@ public class ClaudeClient implements AutoCloseable {
      * Closes the Claude client and releases resources
      *
      * <p>Implements AutoCloseable for try-with-resources pattern</p>
+     * <p>Synchronized to coordinate with other operations and prevent
+     * TOCTOU race conditions during client closure</p>
      */
     @Override
-    public void close() {
+    public synchronized void close() {
         closed = true;
         if (client != null) {
             try {

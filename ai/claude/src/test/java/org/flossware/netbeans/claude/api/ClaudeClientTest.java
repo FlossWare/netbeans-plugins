@@ -70,7 +70,7 @@ class ClaudeClientTest {
     }
 
     @Test
-    void testClearHistory_Multiple() {
+    void testClearHistory_Multiple() throws org.flossware.netbeans.claude.exceptions.ClaudeException {
         client.clearHistory();
         client.clearHistory();
         client.clearHistory();

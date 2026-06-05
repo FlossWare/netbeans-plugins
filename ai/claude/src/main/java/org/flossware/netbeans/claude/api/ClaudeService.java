@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import org.flossware.netbeans.claude.exceptions.ClaudeException;
 import org.openide.util.RequestProcessor;
 
 /**
@@ -32,6 +33,7 @@ import org.openide.util.RequestProcessor;
 public class ClaudeService implements AutoCloseable {
 
     private static ClaudeService instance;
+    private static volatile boolean hasBeenShutdown = false;
     private final ClaudeClient client;
     private final RequestProcessor requestProcessor;
     private volatile boolean closed = false;
@@ -41,7 +43,16 @@ public class ClaudeService implements AutoCloseable {
         this.requestProcessor = new RequestProcessor("Claude API", 3);
     }
 
+    /**
+     * Get the singleton instance of ClaudeService.
+     *
+     * @return the singleton instance
+     * @throws IllegalStateException if the service has been shut down
+     */
     public static synchronized ClaudeService getInstance() {
+        if (hasBeenShutdown) {
+            throw new IllegalStateException("Service has been shut down and cannot be restarted");
+        }
         if (instance == null) {
             instance = new ClaudeService();
         }
@@ -49,9 +60,16 @@ public class ClaudeService implements AutoCloseable {
     }
 
     /**
-     * Shutdown the service and release all resources
+     * Shutdown the service and release all resources.
+     *
+     * <p>After shutdown, the service cannot be restarted. Any subsequent calls to
+     * {@link #getInstance()} will throw {@link IllegalStateException}. This ensures
+     * consistent singleton behavior and prevents accidental re-instantiation.</p>
+     *
+     * <p>Calling shutdown multiple times is safe and idempotent.</p>
      */
     public static synchronized void shutdown() {
+        hasBeenShutdown = true;
         if (instance != null) {
             try {
                 instance.close();
@@ -117,7 +135,11 @@ public class ClaudeService implements AutoCloseable {
      * Clear conversation history
      */
     public void clearHistory() {
-        client.clearHistory();
+        try {
+            client.clearHistory();
+        } catch (Exception e) {
+            // Log but don't rethrow - gracefully handle clearing history
+        }
     }
 
     /**
