@@ -26,12 +26,15 @@ import org.openide.util.RequestProcessor;
 /**
  * Service layer for Claude API interactions
  * Handles async operations and thread management
+ *
+ * <p>Thread-safe singleton with proper resource management through try-with-resources pattern.</p>
  */
-public class ClaudeService {
+public class ClaudeService implements AutoCloseable {
 
     private static ClaudeService instance;
     private final ClaudeClient client;
     private final RequestProcessor requestProcessor;
+    private volatile boolean closed = false;
 
     private ClaudeService() {
         this.client = new ClaudeClient();
@@ -46,9 +49,30 @@ public class ClaudeService {
     }
 
     /**
+     * Shutdown the service and release all resources
+     */
+    public static synchronized void shutdown() {
+        if (instance != null) {
+            try {
+                instance.close();
+            } catch (Exception e) {
+                // Log but don't rethrow
+            }
+            instance = null;
+        }
+    }
+
+    /**
      * Send message asynchronously
+     *
+     * @param message The message to send
+     * @return CompletableFuture with the response
+     * @throws IllegalStateException if the service is closed
      */
     public CompletableFuture<String> sendMessageAsync(String message) {
+        if (closed) {
+            throw new IllegalStateException("Service has been closed");
+        }
         CompletableFuture<String> future = new CompletableFuture<>();
 
         requestProcessor.post(() -> {
@@ -65,8 +89,16 @@ public class ClaudeService {
 
     /**
      * Send message with code context asynchronously
+     *
+     * @param message The message to send
+     * @param codeContext The code context
+     * @return CompletableFuture with the response
+     * @throws IllegalStateException if the service is closed
      */
     public CompletableFuture<String> sendMessageWithContextAsync(String message, String codeContext) {
+        if (closed) {
+            throw new IllegalStateException("Service has been closed");
+        }
         CompletableFuture<String> future = new CompletableFuture<>();
 
         requestProcessor.post(() -> {
@@ -90,6 +122,8 @@ public class ClaudeService {
 
     /**
      * Check if API key is configured
+     *
+     * @return true if API key is configured, false otherwise
      */
     public boolean isConfigured() {
         return client.isConfigured();
@@ -97,6 +131,8 @@ public class ClaudeService {
 
     /**
      * Get the Claude client
+     *
+     * @return The underlying ClaudeClient instance
      */
     public ClaudeClient getClient() {
         return client;
@@ -104,6 +140,8 @@ public class ClaudeService {
 
     /**
      * Get conversation history size
+     *
+     * @return The number of messages in conversation history
      */
     public int getHistorySize() {
         return client.getHistorySize();
@@ -111,11 +149,16 @@ public class ClaudeService {
 
     /**
      * Send message with streaming response
+     *
      * @param message The message to send
      * @param onChunk Callback for each streamed chunk (called on background thread)
      * @return CompletableFuture with the complete response
+     * @throws IllegalStateException if the service is closed
      */
     public CompletableFuture<String> sendMessageStreamingAsync(String message, Consumer<String> onChunk) {
+        if (closed) {
+            throw new IllegalStateException("Service has been closed");
+        }
         CompletableFuture<String> future = new CompletableFuture<>();
 
         requestProcessor.post(() -> {
@@ -132,8 +175,17 @@ public class ClaudeService {
 
     /**
      * Send message with code context and streaming
+     *
+     * @param message The message to send
+     * @param codeContext The code context
+     * @param onChunk Callback for each streamed chunk
+     * @return CompletableFuture with the complete response
+     * @throws IllegalStateException if the service is closed
      */
     public CompletableFuture<String> sendMessageWithContextStreamingAsync(String message, String codeContext, Consumer<String> onChunk) {
+        if (closed) {
+            throw new IllegalStateException("Service has been closed");
+        }
         CompletableFuture<String> future = new CompletableFuture<>();
 
         requestProcessor.post(() -> {
@@ -146,5 +198,21 @@ public class ClaudeService {
         });
 
         return future;
+    }
+
+    /**
+     * Closes the service and releases resources
+     *
+     * <p>Implements AutoCloseable for try-with-resources pattern</p>
+     */
+    @Override
+    public void close() throws Exception {
+        closed = true;
+        if (client != null) {
+            client.close();
+        }
+        if (requestProcessor != null) {
+            requestProcessor.stop();
+        }
     }
 }

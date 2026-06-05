@@ -25,13 +25,14 @@ import com.anthropic.models.messages.Message;
 import com.anthropic.models.messages.MessageCreateParams;
 import com.anthropic.models.messages.MessageParam;
 import com.anthropic.models.messages.RawMessageStreamEvent;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import org.flossware.netbeans.ai.core.validation.MessageValidator;
 import org.flossware.netbeans.claude.exceptions.ClaudeAuthException;
 import org.flossware.netbeans.claude.exceptions.ClaudeConfigException;
 import org.flossware.netbeans.claude.exceptions.ClaudeException;
@@ -42,8 +43,11 @@ import org.openide.util.NbPreferences;
 
 /**
  * Client for interacting with Claude API
+ *
+ * <p>Thread-safe implementation using CopyOnWriteArrayList for conversation history.
+ * Provides synchronous and streaming message sending capabilities with automatic retry logic.</p>
  */
-public class ClaudeClient {
+public class ClaudeClient implements AutoCloseable {
 
     private static final Logger LOGGER = Logger.getLogger(ClaudeClient.class.getName());
 
@@ -51,21 +55,27 @@ public class ClaudeClient {
     private static final String PREF_MODEL = "anthropic.model";
     private static final String PREF_MAX_TOKENS = "anthropic.max.tokens";
     private static final String PREF_TEMPERATURE = "anthropic.temperature";
+    private static final String PREF_API_URL = "anthropic.api.url";
     private static final String DEFAULT_MODEL = "claude-sonnet-4-5@20250929";
+    private static final String DEFAULT_API_URL = "https://api.anthropic.com";
 
     private AnthropicClient client;
     private final List<MessageParam> conversationHistory;
     private final RetryPolicy retryPolicy;
+    private final MessageValidator messageValidator;
+    private volatile boolean closed = false;
 
     public ClaudeClient() {
-        this.conversationHistory = new ArrayList<>();
+        this.conversationHistory = new CopyOnWriteArrayList<>();
         this.retryPolicy = new RetryPolicy();
+        this.messageValidator = MessageValidator.createStandard();
         initializeClient();
     }
 
     public ClaudeClient(RetryPolicy retryPolicy) {
-        this.conversationHistory = new ArrayList<>();
+        this.conversationHistory = new CopyOnWriteArrayList<>();
         this.retryPolicy = Objects.requireNonNull(retryPolicy, "retryPolicy cannot be null");
+        this.messageValidator = MessageValidator.createStandard();
         initializeClient();
     }
 
@@ -73,9 +83,16 @@ public class ClaudeClient {
         String apiKey = getApiKey();
         if (apiKey != null && !apiKey.isEmpty()) {
             try {
-                client = AnthropicOkHttpClient.builder()
-                        .apiKey(apiKey)
-                        .build();
+                AnthropicOkHttpClient.Builder builder = AnthropicOkHttpClient.builder()
+                        .apiKey(apiKey);
+
+                // Get custom API URL if configured
+                String apiUrl = getApiUrl();
+                if (apiUrl != null && !apiUrl.isEmpty()) {
+                    builder.baseUrl(apiUrl);
+                }
+
+                client = builder.build();
                 LOGGER.log(Level.INFO, "Claude client initialized successfully");
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Failed to initialize Claude client", e);
@@ -86,17 +103,35 @@ public class ClaudeClient {
 
     /**
      * Get the API key from NetBeans preferences
+     *
+     * @return The configured API key, or empty string if not set
      */
     public String getApiKey() {
+        Objects.requireNonNull(NbPreferences.class, "NetBeans Preferences not available");
         Preferences prefs = NbPreferences.forModule(ClaudeClient.class);
-        return prefs.get(PREF_API_KEY, "");
+        return Objects.requireNonNull(prefs, "Preferences cannot be null").get(PREF_API_KEY, "");
+    }
+
+    /**
+     * Get the API URL from NetBeans preferences
+     *
+     * @return The configured API URL, or default URL if not set
+     */
+    public String getApiUrl() {
+        Objects.requireNonNull(NbPreferences.class, "NetBeans Preferences not available");
+        Preferences prefs = NbPreferences.forModule(ClaudeClient.class);
+        return Objects.requireNonNull(prefs, "Preferences cannot be null").get(PREF_API_URL, DEFAULT_API_URL);
     }
 
     /**
      * Set the API key in NetBeans preferences
+     *
+     * @param apiKey The API key to set (null or empty to remove)
      */
     public void setApiKey(String apiKey) {
+        Objects.requireNonNull(NbPreferences.class, "NetBeans Preferences not available");
         Preferences prefs = NbPreferences.forModule(ClaudeClient.class);
+        Objects.requireNonNull(prefs, "Preferences cannot be null");
         if (apiKey == null || apiKey.trim().isEmpty()) {
             prefs.remove(PREF_API_KEY);
         } else {
@@ -106,7 +141,26 @@ public class ClaudeClient {
     }
 
     /**
+     * Set the API URL in NetBeans preferences
+     *
+     * @param apiUrl The API URL to set (null or empty to use default)
+     */
+    public void setApiUrl(String apiUrl) {
+        Objects.requireNonNull(NbPreferences.class, "NetBeans Preferences not available");
+        Preferences prefs = NbPreferences.forModule(ClaudeClient.class);
+        Objects.requireNonNull(prefs, "Preferences cannot be null");
+        if (apiUrl == null || apiUrl.trim().isEmpty()) {
+            prefs.remove(PREF_API_URL);
+        } else {
+            prefs.put(PREF_API_URL, apiUrl.trim());
+        }
+        initializeClient();
+    }
+
+    /**
      * Check if API key is configured
+     *
+     * @return true if API key is configured, false otherwise
      */
     public boolean isConfigured() {
         String apiKey = getApiKey();
@@ -115,13 +169,28 @@ public class ClaudeClient {
 
     /**
      * Send a message to Claude and get a response
+     *
+     * @param userMessage The message to send (must not be null or empty)
+     * @return The response from Claude
+     * @throws ClaudeException if the message cannot be sent
      */
     public String sendMessage(String userMessage) throws ClaudeException {
         Objects.requireNonNull(userMessage, "userMessage cannot be null");
 
+        // Validate input
+        try {
+            messageValidator.validateMessage(userMessage);
+        } catch (IllegalArgumentException e) {
+            throw new ClaudeException("Invalid message: " + e.getMessage(), e);
+        }
+
         if (!isConfigured()) {
             LOGGER.log(Level.WARNING, "Attempted to send message without API key configured");
             throw new ClaudeConfigException("API key not configured. Please configure your Anthropic API key in Tools > Options > Claude");
+        }
+
+        if (closed) {
+            throw new ClaudeException("Client has been closed");
         }
 
         return retryPolicy.executeWithRetry(() -> sendMessageInternal(userMessage));
@@ -187,10 +256,22 @@ public class ClaudeClient {
 
     /**
      * Send a message with code context
+     *
+     * @param userMessage The message to send (must not be null)
+     * @param codeContext The code context (must not be null)
+     * @return The response from Claude
+     * @throws ClaudeException if the message cannot be sent
      */
     public String sendMessageWithContext(String userMessage, String codeContext) throws ClaudeException {
         Objects.requireNonNull(userMessage, "userMessage cannot be null");
         Objects.requireNonNull(codeContext, "codeContext cannot be null");
+
+        // Validate inputs
+        try {
+            messageValidator.validateMessageWithContext(userMessage, codeContext);
+        } catch (IllegalArgumentException e) {
+            throw new ClaudeException("Invalid message or context: " + e.getMessage(), e);
+        }
 
         String fullMessage = String.format(
             "Here is the code context:\n\n```\n%s\n```\n\nUser question: %s",
@@ -202,6 +283,8 @@ public class ClaudeClient {
 
     /**
      * Clear conversation history
+     *
+     * <p>Thread-safe operation using CopyOnWriteArrayList</p>
      */
     public void clearHistory() {
         conversationHistory.clear();
@@ -220,6 +303,10 @@ public class ClaudeClient {
 
     /**
      * Get conversation history size
+     *
+     * <p>Thread-safe operation using CopyOnWriteArrayList</p>
+     *
+     * @return The number of messages in conversation history
      */
     public int getHistorySize() {
         return conversationHistory.size();
@@ -227,17 +314,30 @@ public class ClaudeClient {
 
     /**
      * Send a message with streaming response
-     * @param userMessage The message to send
-     * @param onChunk Callback for each streamed chunk
+     *
+     * @param userMessage The message to send (must not be null)
+     * @param onChunk Callback for each streamed chunk (must not be null)
      * @return The complete response
+     * @throws ClaudeException if the message cannot be sent
      */
     public String sendMessageStreaming(String userMessage, Consumer<String> onChunk) throws ClaudeException {
         Objects.requireNonNull(userMessage, "userMessage cannot be null");
         Objects.requireNonNull(onChunk, "onChunk callback cannot be null");
 
+        // Validate input
+        try {
+            messageValidator.validateMessage(userMessage);
+        } catch (IllegalArgumentException e) {
+            throw new ClaudeException("Invalid message: " + e.getMessage(), e);
+        }
+
         if (!isConfigured()) {
             LOGGER.log(Level.WARNING, "Attempted to send streaming message without API key configured");
             throw new ClaudeConfigException("API key not configured. Please configure your Anthropic API key in Tools > Options > Claude");
+        }
+
+        if (closed) {
+            throw new ClaudeException("Client has been closed");
         }
 
         return retryPolicy.executeWithRetry(() -> sendMessageStreamingInternal(userMessage, onChunk));
@@ -316,11 +416,24 @@ public class ClaudeClient {
 
     /**
      * Send a message with code context and streaming
+     *
+     * @param userMessage The message to send (must not be null)
+     * @param codeContext The code context (must not be null)
+     * @param onChunk Callback for each streamed chunk (must not be null)
+     * @return The complete response
+     * @throws ClaudeException if the message cannot be sent
      */
     public String sendMessageWithContextStreaming(String userMessage, String codeContext, Consumer<String> onChunk) throws ClaudeException {
         Objects.requireNonNull(userMessage, "userMessage cannot be null");
         Objects.requireNonNull(codeContext, "codeContext cannot be null");
         Objects.requireNonNull(onChunk, "onChunk callback cannot be null");
+
+        // Validate inputs
+        try {
+            messageValidator.validateMessageWithContext(userMessage, codeContext);
+        } catch (IllegalArgumentException e) {
+            throw new ClaudeException("Invalid message or context: " + e.getMessage(), e);
+        }
 
         String fullMessage = String.format(
             "Here is the code context:\n\n```\n%s\n```\n\nUser question: %s",
@@ -328,5 +441,24 @@ public class ClaudeClient {
             userMessage
         );
         return sendMessageStreaming(fullMessage, onChunk);
+    }
+
+    /**
+     * Closes the Claude client and releases resources
+     *
+     * <p>Implements AutoCloseable for try-with-resources pattern</p>
+     */
+    @Override
+    public void close() {
+        closed = true;
+        if (client != null) {
+            try {
+                client.close();
+                LOGGER.log(Level.INFO, "Claude client closed successfully");
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Error closing Claude client", e);
+            }
+        }
+        conversationHistory.clear();
     }
 }

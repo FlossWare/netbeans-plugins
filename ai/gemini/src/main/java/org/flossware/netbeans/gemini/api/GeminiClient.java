@@ -31,6 +31,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.flossware.netbeans.ai.core.validation.MessageValidator;
 import org.openide.util.NbPreferences;
 
 /**
@@ -48,11 +49,13 @@ public class GeminiClient {
     private final OkHttpClient httpClient;
     private final Gson gson;
     private final List<ConversationMessage> conversationHistory;
+    private final MessageValidator messageValidator;
 
     public GeminiClient() {
         this.httpClient = new OkHttpClient();
         this.gson = new Gson();
         this.conversationHistory = new ArrayList<>();
+        this.messageValidator = MessageValidator.createStandard();
     }
 
     /**
@@ -83,6 +86,13 @@ public class GeminiClient {
      * Send a message to Gemini and get a response
      */
     public String sendMessage(String userMessage) throws IOException {
+        // Validate input
+        try {
+            messageValidator.validateMessage(userMessage);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Invalid message: " + e.getMessage(), e);
+        }
+
         if (!isConfigured()) {
             throw new IllegalStateException("API key not configured. Please configure your Google AI API key in Tools > Options > Gemini");
         }
@@ -110,6 +120,13 @@ public class GeminiClient {
      * Send a message with code context
      */
     public String sendMessageWithContext(String userMessage, String codeContext) throws IOException {
+        // Validate inputs
+        try {
+            messageValidator.validateMessageWithContext(userMessage, codeContext);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Invalid message or context: " + e.getMessage(), e);
+        }
+
         String fullMessage = String.format(
             "Here is the code context:\n\n```\n%s\n```\n\nUser question: %s",
             codeContext,
@@ -122,6 +139,13 @@ public class GeminiClient {
      * Send a message with streaming response
      */
     public String sendMessageStreaming(String userMessage, Consumer<String> onChunk) throws IOException {
+        // Validate input
+        try {
+            messageValidator.validateMessage(userMessage);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Invalid message: " + e.getMessage(), e);
+        }
+
         if (!isConfigured()) {
             throw new IllegalStateException("API key not configured");
         }
@@ -146,6 +170,13 @@ public class GeminiClient {
      * Send a message with code context and streaming response
      */
     public String sendMessageWithContextStreaming(String userMessage, String codeContext, Consumer<String> onChunk) throws IOException {
+        // Validate inputs
+        try {
+            messageValidator.validateMessageWithContext(userMessage, codeContext);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Invalid message or context: " + e.getMessage(), e);
+        }
+
         String fullMessage = String.format(
             "Here is the code context:\n\n```\n%s\n```\n\nUser question: %s",
             codeContext,

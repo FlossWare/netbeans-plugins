@@ -32,6 +32,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.flossware.netbeans.ai.core.validation.MessageValidator;
 import org.openide.util.NbPreferences;
 
 /**
@@ -53,9 +54,11 @@ public class CohereClient {
     private int maxTokens;
     private double temperature;
     private List<JsonObject> conversationHistory;
+    private final MessageValidator messageValidator;
 
     public CohereClient() {
         this.gson = new Gson();
+        this.messageValidator = MessageValidator.createStandard();
         loadSettings();
         conversationHistory = new ArrayList<>();
     }
@@ -99,6 +102,13 @@ public class CohereClient {
      * Send a message and get a response
      */
     public String sendMessage(String message) throws IOException {
+        // Validate input
+        try {
+            messageValidator.validateMessage(message);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Invalid message: " + e.getMessage(), e);
+        }
+
         if (httpClient == null || apiKey.isEmpty()) {
             throw new IllegalStateException("API key not configured");
         }
@@ -172,6 +182,13 @@ public class CohereClient {
      * Note: Cohere API supports streaming, but this is a simplified implementation
      */
     public String sendMessageStreaming(String message, Consumer<String> onChunk) throws IOException {
+        // Validate input
+        try {
+            messageValidator.validateMessage(message);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Invalid message: " + e.getMessage(), e);
+        }
+
         // For now, we'll simulate streaming by sending the full message
         // Real streaming would require SSE (Server-Sent Events) support
         String response = sendMessage(message);
@@ -206,6 +223,13 @@ public class CohereClient {
      * Send a message with additional context
      */
     public String sendMessageWithContext(String message, String context) throws IOException {
+        // Validate inputs
+        try {
+            messageValidator.validateMessageWithContext(message, context);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Invalid message or context: " + e.getMessage(), e);
+        }
+
         String fullMessage = "Context:\n" + context + "\n\nQuestion:\n" + message;
         return sendMessage(fullMessage);
     }
@@ -227,6 +251,13 @@ public class CohereClient {
      * Send a message with context and streaming response
      */
     public String sendMessageWithContextStreaming(String message, String context, Consumer<String> onChunk) throws IOException {
+        // Validate inputs
+        try {
+            messageValidator.validateMessageWithContext(message, context);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Invalid message or context: " + e.getMessage(), e);
+        }
+
         String fullMessage = "Context:\n" + context + "\n\nQuestion:\n" + message;
         return sendMessageStreaming(fullMessage, onChunk);
     }

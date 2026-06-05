@@ -32,10 +32,18 @@ import org.flossware.netbeans.claude.util.EditorUtil;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
+import org.openide.util.NbBundle.Messages;
 
 /**
  * Dialog for inserting code into the editor
  */
+@Messages({
+    "DIALOG_Title=Insert Code",
+    "DIALOG_TitleForLanguage=Insert Code: ",
+    "BTN_InsertAtCursor=Insert at cursor",
+    "BTN_ReplaceSelection=Replace selection",
+    "MSG_NoActiveEditor=No active editor found. Please open a file first."
+})
 public class CodeInsertDialog extends JPanel {
 
     private final CodeBlock codeBlock;
@@ -52,7 +60,7 @@ public class CodeInsertDialog extends JPanel {
         setLayout(new BorderLayout(10, 10));
 
         // Title
-        JLabel titleLabel = new JLabel("Insert Code: " + codeBlock.getLanguage());
+        JLabel titleLabel = new JLabel(Bundle.DIALOG_TitleForLanguage() + codeBlock.getLanguage());
         titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
         add(titleLabel, BorderLayout.NORTH);
 
@@ -67,8 +75,8 @@ public class CodeInsertDialog extends JPanel {
 
         // Options panel
         JPanel optionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        insertAtCursorRadio = new JRadioButton("Insert at cursor", true);
-        replaceSelectionRadio = new JRadioButton("Replace selection");
+        insertAtCursorRadio = new JRadioButton(Bundle.BTN_InsertAtCursor(), true);
+        replaceSelectionRadio = new JRadioButton(Bundle.BTN_ReplaceSelection());
         replaceSelectionRadio.setEnabled(EditorUtil.getSelectedText() != null);
 
         ButtonGroup group = new ButtonGroup();
@@ -86,7 +94,7 @@ public class CodeInsertDialog extends JPanel {
     public static void showAndInsert(CodeBlock codeBlock) {
         if (!EditorUtil.hasActiveEditor()) {
             NotifyDescriptor nd = new NotifyDescriptor.Message(
-                    "No active editor found. Please open a file first.",
+                    Bundle.MSG_NoActiveEditor(),
                     NotifyDescriptor.WARNING_MESSAGE
             );
             DialogDisplayer.getDefault().notify(nd);
@@ -97,7 +105,7 @@ public class CodeInsertDialog extends JPanel {
 
         DialogDescriptor dd = new DialogDescriptor(
                 panel,
-                "Insert Code",
+                Bundle.DIALOG_Title(),
                 true,
                 DialogDescriptor.OK_CANCEL_OPTION,
                 DialogDescriptor.OK_OPTION,

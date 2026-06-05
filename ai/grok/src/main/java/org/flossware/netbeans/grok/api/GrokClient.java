@@ -29,6 +29,7 @@ import java.util.function.Consumer;
 import java.util.prefs.Preferences;
 import okhttp3.OkHttpClient;
 import org.openide.util.NbPreferences;
+import org.flossware.netbeans.ai.core.validation.MessageValidator;
 
 /**
  * Client for interacting with xAI Grok API
@@ -47,8 +48,10 @@ public class GrokClient {
     private int maxTokens;
     private double temperature;
     private List<ChatMessage> conversationHistory;
+    private final MessageValidator messageValidator;
 
     public GrokClient() {
+        this.messageValidator = MessageValidator.createStandard();
         loadSettings();
         conversationHistory = new ArrayList<>();
     }
@@ -124,6 +127,13 @@ public class GrokClient {
      * Send a message and get a response
      */
     public String sendMessage(String message) {
+        // Validate input
+        try {
+            messageValidator.validateMessage(message);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid message: " + e.getMessage(), e);
+        }
+
         if (service == null) {
             throw new IllegalStateException("API key not configured");
         }
@@ -159,6 +169,13 @@ public class GrokClient {
      * Send a message with streaming response (synchronous)
      */
     public String sendMessageStreaming(String message, Consumer<String> onChunk) {
+        // Validate input
+        try {
+            messageValidator.validateMessage(message);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid message: " + e.getMessage(), e);
+        }
+
         if (service == null) {
             throw new IllegalStateException("API key not configured");
         }
@@ -217,6 +234,13 @@ public class GrokClient {
      * Send a message with additional context
      */
     public String sendMessageWithContext(String message, String context) {
+        // Validate inputs
+        try {
+            messageValidator.validateMessageWithContext(message, context);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid message or context: " + e.getMessage(), e);
+        }
+
         String fullMessage = "Context:\n" + context + "\n\nQuestion:\n" + message;
         return sendMessage(fullMessage);
     }
@@ -232,6 +256,13 @@ public class GrokClient {
      * Send a message with context and streaming response
      */
     public String sendMessageWithContextStreaming(String message, String context, Consumer<String> onChunk) {
+        // Validate inputs
+        try {
+            messageValidator.validateMessageWithContext(message, context);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid message or context: " + e.getMessage(), e);
+        }
+
         String fullMessage = "Context:\n" + context + "\n\nQuestion:\n" + message;
         return sendMessageStreaming(fullMessage, onChunk);
     }

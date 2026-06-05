@@ -63,7 +63,7 @@ jobs:
           NBM_COUNT=$(find . -name "*.nbm" -path "*/target/*" -not -path "*/target/nbm/*" | wc -l)
           if [ "$NBM_COUNT" -ne 23 ]; then
             echo "❌ Expected 23 NBM files, found $NBM_COUNT"
-            find . -name "*.nbm" -path "*/target/*"
+            find . -name "*.nbm" -path "*/target/*" -not -path "*/target/nbm/*"
             exit 1
           fi
           echo "✅ All 23 NBM files created successfully:"

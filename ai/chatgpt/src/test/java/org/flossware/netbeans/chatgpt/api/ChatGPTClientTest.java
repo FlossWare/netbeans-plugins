@@ -86,4 +86,58 @@ class ChatGPTClientTest {
             .isInstanceOf(IllegalStateException.class)
             .hasMessageContaining("API key not configured");
     }
+
+    @Test
+    void testSetModel_DoesNotThrow() {
+        assertThatCode(() -> client.setModel("gpt-4o")).doesNotThrowAnyException();
+    }
+
+    @Test
+    void testSetMaxTokens_DoesNotThrow() {
+        assertThatCode(() -> client.setMaxTokens(8192)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void testSetTemperature_DoesNotThrow() {
+        assertThatCode(() -> client.setTemperature(0.5)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void testGetConversationHistory_InitiallyEmpty() {
+        assertThat(client.getConversationHistory()).isEmpty();
+    }
+
+    @Test
+    void testGetConversationHistory_ReturnsCopy() {
+        var history1 = client.getConversationHistory();
+        var history2 = client.getConversationHistory();
+        assertThat(history1).isNotSameAs(history2);
+    }
+
+    @Test
+    void testClearHistory_ResetsSize() {
+        client.clearHistory();
+        assertThat(client.getHistorySize()).isEqualTo(0);
+        assertThat(client.getConversationHistory()).isEmpty();
+    }
+
+    @Test
+    void testSetApiKey_EmptyString() {
+        client.setApiKey("");
+        assertThat(client.isConfigured()).isFalse();
+    }
+
+    @Test
+    void testSendMessageAsync_WithoutApiKey_CompletesExceptionally() {
+        var future = client.sendMessageAsync("Hello");
+        assertThatThrownBy(() -> future.get(5, java.util.concurrent.TimeUnit.SECONDS))
+            .hasCauseInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void testSendMessageWithContextAsync_WithoutApiKey_CompletesExceptionally() {
+        var future = client.sendMessageWithContextAsync("Question", "Context");
+        assertThatThrownBy(() -> future.get(5, java.util.concurrent.TimeUnit.SECONDS))
+            .hasCauseInstanceOf(IllegalStateException.class);
+    }
 }

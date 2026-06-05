@@ -86,4 +86,49 @@ class GeminiClientTest {
             .isInstanceOf(IllegalStateException.class)
             .hasMessageContaining("API key not configured");
     }
+
+    @Test
+    void testClearHistory_ResetsSize() {
+        client.clearHistory();
+        assertThat(client.getHistorySize()).isEqualTo(0);
+    }
+
+    @Test
+    void testClearHistory_CalledMultipleTimes() {
+        client.clearHistory();
+        client.clearHistory();
+        assertThat(client.getHistorySize()).isEqualTo(0);
+    }
+
+    @Test
+    void testSendMessage_NullMessage_ThrowsIOException() {
+        // Null message should be caught by message validator
+        assertThatThrownBy(() -> client.sendMessage(null))
+            .isInstanceOf(Exception.class);
+    }
+
+    @Test
+    void testSendMessage_EmptyMessage_ThrowsIOException() {
+        // Empty message should be caught by message validator
+        assertThatThrownBy(() -> client.sendMessage(""))
+            .isInstanceOf(Exception.class);
+    }
+
+    @Test
+    void testSendMessageStreaming_NullMessage_Throws() {
+        assertThatThrownBy(() -> client.sendMessageStreaming(null, chunk -> {}))
+            .isInstanceOf(Exception.class);
+    }
+
+    @Test
+    void testSendMessageWithContext_NullMessage_Throws() {
+        assertThatThrownBy(() -> client.sendMessageWithContext(null, "context"))
+            .isInstanceOf(Exception.class);
+    }
+
+    @Test
+    void testSendMessageWithContextStreaming_NullMessage_Throws() {
+        assertThatThrownBy(() -> client.sendMessageWithContextStreaming(null, "context", chunk -> {}))
+            .isInstanceOf(Exception.class);
+    }
 }

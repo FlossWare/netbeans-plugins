@@ -59,7 +59,16 @@ import org.openide.windows.WindowManager;
 @Messages({
     "CTL_ClaudeWindowAction=Claude",
     "CTL_ClaudeWindowTopComponent=Claude Chat",
-    "HINT_ClaudeWindowTopComponent=Claude AI Assistant"
+    "HINT_ClaudeWindowTopComponent=Claude AI Assistant",
+    "BTN_Send=Send",
+    "BTN_Clear=Clear",
+    "LBL_StatusNotConfigured=⚠ API key not configured. Set it in Tools > Options",
+    "LBL_StatusReady=✓ Ready",
+    "MSG_Welcome=Welcome to Claude AI Assistant!\nType your questions or requests below.\nYou can ask about code, get explanations, or request help with programming tasks.",
+    "MSG_ConfigurationError=API key not configured. Please set your Anthropic API key in Tools > Options.",
+    "MSG_Thinking=Thinking...",
+    "MSG_ResponseError=Failed to get response: ",
+    "MSG_ChatCleared=Chat cleared. Conversation history reset."
 })
 public final class ClaudeWindowTopComponent extends TopComponent {
 
@@ -93,10 +102,10 @@ public final class ClaudeWindowTopComponent extends TopComponent {
         inputField.setFont(new Font("SansSerif", Font.PLAIN, 12));
         inputField.addActionListener(this::sendMessage);
 
-        sendButton = new JButton("Send");
+        sendButton = new JButton(Bundle.BTN_Send());
         sendButton.addActionListener(this::sendMessage);
 
-        clearButton = new JButton("Clear");
+        clearButton = new JButton(Bundle.BTN_Clear());
         clearButton.addActionListener(e -> clearChat());
 
         JPanel buttonPanel = new JPanel();
@@ -109,10 +118,10 @@ public final class ClaudeWindowTopComponent extends TopComponent {
         // Status label
         JLabel statusLabel = new JLabel();
         if (!claudeService.isConfigured()) {
-            statusLabel.setText("⚠ API key not configured. Set it in Tools > Options");
+            statusLabel.setText(Bundle.LBL_StatusNotConfigured());
             statusLabel.setForeground(Color.RED);
         } else {
-            statusLabel.setText("✓ Ready");
+            statusLabel.setText(Bundle.LBL_StatusReady());
             statusLabel.setForeground(new Color(0, 128, 0));
         }
 
@@ -121,10 +130,7 @@ public final class ClaudeWindowTopComponent extends TopComponent {
         add(statusLabel, BorderLayout.NORTH);
 
         // Initial welcome message
-        appendToChat("System", "Welcome to Claude AI Assistant!\n" +
-                "Type your questions or requests below.\n" +
-                "You can ask about code, get explanations, or request help with programming tasks.\n",
-                Color.BLUE);
+        appendToChat("System", Bundle.MSG_Welcome(), Color.BLUE);
     }
 
     private void sendMessage(ActionEvent evt) {
@@ -141,14 +147,14 @@ public final class ClaudeWindowTopComponent extends TopComponent {
         // Check if configured
         if (!claudeService.isConfigured()) {
             appendToChat("System",
-                    "API key not configured. Please set your Anthropic API key in Tools > Options.",
+                    Bundle.MSG_ConfigurationError(),
                     Color.RED);
             sendButton.setEnabled(true);
             return;
         }
 
         // Send to Claude API
-        appendToChat("Claude", "Thinking...", Color.GRAY);
+        appendToChat("Claude", Bundle.MSG_Thinking(), Color.GRAY);
         claudeService.sendMessageAsync(message).thenAccept(response -> {
             SwingUtilities.invokeLater(() -> {
                 removeLastMessage(); // Remove "Thinking..."
@@ -159,7 +165,7 @@ public final class ClaudeWindowTopComponent extends TopComponent {
         }).exceptionally(ex -> {
             SwingUtilities.invokeLater(() -> {
                 removeLastMessage(); // Remove "Thinking..."
-                appendToChat("Error", "Failed to get response: " + ex.getMessage(), Color.RED);
+                appendToChat("Error", Bundle.MSG_ResponseError() + ex.getMessage(), Color.RED);
                 sendButton.setEnabled(true);
                 inputField.requestFocus();
             });
@@ -203,7 +209,7 @@ public final class ClaudeWindowTopComponent extends TopComponent {
     private void clearChat() {
         chatArea.setText("");
         claudeService.clearHistory();
-        appendToChat("System", "Chat cleared. Conversation history reset.", Color.BLUE);
+        appendToChat("System", Bundle.MSG_ChatCleared(), Color.BLUE);
     }
 
     public static synchronized ClaudeWindowTopComponent getDefault() {
@@ -281,13 +287,13 @@ public final class ClaudeWindowTopComponent extends TopComponent {
 
         if (!claudeService.isConfigured()) {
             appendToChat("System",
-                    "API key not configured. Please set your Anthropic API key in Tools > Options.",
+                    Bundle.MSG_ConfigurationError(),
                     Color.RED);
             sendButton.setEnabled(true);
             return;
         }
 
-        appendToChat("Claude", "Thinking...", Color.GRAY);
+        appendToChat("Claude", Bundle.MSG_Thinking(), Color.GRAY);
         claudeService.sendMessageAsync(message).thenAccept(response -> {
             SwingUtilities.invokeLater(() -> {
                 removeLastMessage();
@@ -297,7 +303,7 @@ public final class ClaudeWindowTopComponent extends TopComponent {
         }).exceptionally(ex -> {
             SwingUtilities.invokeLater(() -> {
                 removeLastMessage();
-                appendToChat("Error", "Failed to get response: " + ex.getMessage(), Color.RED);
+                appendToChat("Error", Bundle.MSG_ResponseError() + ex.getMessage(), Color.RED);
                 sendButton.setEnabled(true);
             });
             return null;

@@ -104,6 +104,13 @@
             <artifactId>org-netbeans-modules-projectuiapi-base</artifactId>
         </dependency>
 
+        <!-- AI Core Framework -->
+        <dependency>
+            <groupId>org.flossware.netbeans</groupId>
+            <artifactId>netbeans-ai-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Claude-specific: Anthropic SDK -->
         <dependency>
             <groupId>com.anthropic</groupId>

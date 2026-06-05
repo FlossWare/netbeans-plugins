@@ -95,6 +95,13 @@
             <artifactId>gson</artifactId>
         </dependency>
 
+        <!-- AI Core Framework -->
+        <dependency>
+            <groupId>org.flossware.netbeans</groupId>
+            <artifactId>netbeans-ai-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

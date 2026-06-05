@@ -54,7 +54,8 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <netbeans.version>RELEASE220</netbeans.version>
-        
+        <netbeans.manifest.file>${project.build.outputDirectory}/META-INF/MANIFEST.MF</netbeans.manifest.file>
+
         <!-- Version bump automation -->
         <message>Automated Version Bump ${project.version} [ci skip]</message>
     </properties>
@@ -305,7 +306,7 @@
                     <version>3.3.0</version>
                     <configuration>
                         <archive>
-                            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                            <manifestFile>${netbeans.manifest.file}</manifestFile>
                         </archive>
                         <outputDirectory>${project.build.directory}</outputDirectory>
                     </configuration>

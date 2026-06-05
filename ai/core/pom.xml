@@ -12,10 +12,15 @@
     </parent>
 
     <artifactId>netbeans-ai-core</artifactId>
-    <packaging>nbm</packaging>
+    <packaging>jar</packaging>
 
     <name>NetBeans AI Core Framework</name>
     <description>Shared core framework for AI integration plugins</description>
+
+    <properties>
+        <!-- Override parent's manifest file requirement since JAR modules don't use NBM manifest -->
+        <netbeans.manifest.file></netbeans.manifest.file>
+    </properties>
 
     <dependencies>
         <!-- NetBeans Platform APIs -->
@@ -63,13 +68,8 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.netbeans.utilities</groupId>
-                <artifactId>nbm-maven-plugin</artifactId>
-                <configuration>
-                    <publicPackages>
-                        <publicPackage>org.flossware.netbeans.ai.core.*</publicPackage>
-                    </publicPackages>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
 
             <!-- JaCoCo coverage enabled with 80% threshold -->

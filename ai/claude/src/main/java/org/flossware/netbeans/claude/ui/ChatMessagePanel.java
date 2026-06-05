@@ -28,10 +28,15 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import org.flossware.netbeans.claude.util.CodeExtractor;
 import org.flossware.netbeans.claude.util.CodeExtractor.CodeBlock;
+import org.openide.util.NbBundle.Messages;
 
 /**
  * Panel for displaying a chat message with code insertion capabilities
  */
+@Messages({
+    "BTN_InsertCode=Insert Code",
+    "BTN_InsertCodeFormat= ("
+})
 public class ChatMessagePanel extends JPanel {
 
     public ChatMessagePanel(String sender, String message, Color senderColor) {
@@ -66,7 +71,7 @@ public class ChatMessagePanel extends JPanel {
 
             for (int i = 0; i < codeBlocks.size(); i++) {
                 final CodeBlock block = codeBlocks.get(i);
-                JButton insertButton = new JButton("Insert Code " + (i + 1) + " (" + block.getLanguage() + ")");
+                JButton insertButton = new JButton(Bundle.BTN_InsertCode() + " " + (i + 1) + Bundle.BTN_InsertCodeFormat() + block.getLanguage() + ")");
                 insertButton.setFont(insertButton.getFont().deriveFont(10f));
                 insertButton.addActionListener(e -> CodeInsertDialog.showAndInsert(block));
                 buttonPanel.add(insertButton);

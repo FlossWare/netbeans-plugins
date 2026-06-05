@@ -22,6 +22,8 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.flossware.netbeans.claude.exceptions.ClaudeAuthException;
+import org.flossware.netbeans.claude.exceptions.ClaudeConfigException;
 import org.flossware.netbeans.claude.exceptions.ClaudeException;
 import org.flossware.netbeans.claude.exceptions.ClaudeRateLimitException;
 
@@ -117,8 +119,8 @@ public class RetryPolicy {
                 lastException = e;
 
                 // Don't retry authentication or configuration errors
-                if (e instanceof org.flossware.netbeans.claude.exceptions.ClaudeAuthException ||
-                    e instanceof org.flossware.netbeans.claude.exceptions.ClaudeConfigException) {
+                if (e instanceof ClaudeAuthException ||
+                    e instanceof ClaudeConfigException) {
                     LOGGER.log(Level.SEVERE, "Non-retryable error: {0}", e.getMessage());
                     throw e;
                 }
