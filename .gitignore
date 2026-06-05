@@ -33,3 +33,5 @@ nb-configuration.xml
 # OS
 .DS_Store
 Thumbs.db
+*.log
+logs/
