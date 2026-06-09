@@ -35,3 +35,4 @@ nb-configuration.xml
 Thumbs.db
 *.log
 logs/
+.claude
